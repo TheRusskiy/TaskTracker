@@ -6,4 +6,20 @@
  * To change this template use File | Settings | File Templates.
  */
 public class IntegrityTest {
+    public static boolean testAll()
+    {
+        boolean result=true;
+        System.out.println("Failed tests:");
+//        if (!createTaskTree())
+//        {
+//            System.out.println("create tree:"+createTaskTree());
+//            result=false;
+//        }
+        return result;
+    }
+
+    public static void main(String[] args)
+    {
+        IntegrityTest.testAll();
+    }
 }
