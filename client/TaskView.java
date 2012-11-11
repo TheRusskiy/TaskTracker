@@ -12,5 +12,6 @@ import javax.swing.*;
 public class TaskView {
      public void doNothing(){
           // testing
+         System.out.print("testing");
      }
 }
