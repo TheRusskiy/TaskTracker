@@ -11,6 +11,7 @@ import java.net.Socket;
  */
 public class TaskServer {
     public static final int PORT = 6969;
+    private boolean working=true;
 
     public static void main(String[] args)
     {
@@ -18,11 +19,15 @@ public class TaskServer {
         taskServer.startServer();
     }
 
+    public void stopServer(){
+        working=false;
+    }
+
     public void startServer(){
         ServerSocket server;
         try {
             server = new ServerSocket(PORT);
-            while(true){
+            while(working){
                 InteractionThread interactionThread = new InteractionThread(server.accept());
                 interactionThread.start();
             }

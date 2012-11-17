@@ -108,7 +108,7 @@ public class ServerTest {
             ous.flush();
             thread.join();
             NetworkInteraction readInteraction;
-            if (!thread.isDone()) throw new Exception("Join finished by no IsDone!");
+            if (!thread.isDone()) throw new Exception("Join finished but no 'IsDone'!");
             readInteraction=thread.getNetworkInteraction();
             if (readInteraction==null) throw new Exception("Null interaction received");
             if (!readInteraction.getText().equals("test string")) throw new Exception("Wrong text arrived");
@@ -142,10 +142,12 @@ public class ServerTest {
     }
 
 
-
+    public static void startTests(){
+        System.out.println("Server test: " + ServerTest.testAll());
+    }
 
     public static void main(String[] args)
     {
-        System.out.println("Server test: " + ServerTest.testAll());
+          startTests();
     }
 }
