@@ -18,6 +18,8 @@ import java.util.concurrent.TimeoutException;
  * To change this template use File | Settings | File Templates.
  */
 public class InteractionThread extends Thread {
+    //TODO timeout!!!(everywhere)
+    //TODO close all sockets!
     private boolean isDone=false;
     private NetworkInteraction interaction = null;
     private Socket client =null;

@@ -24,6 +24,7 @@ public class TaskServer {
     }
 
     public void startServer(){
+        //TODO close all sockets!
         ServerSocket server;
         try {
             server = new ServerSocket(PORT);

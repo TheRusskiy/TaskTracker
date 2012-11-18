@@ -17,7 +17,7 @@ public class ServerTest {
     public static boolean testAll()
     {
         boolean result=true;
-        if (!portTest())
+        if (!serverPortTest())
         {
             System.out.println("port test fails");
             result=false;
@@ -50,7 +50,7 @@ public class ServerTest {
         return result;
     }
 
-    public static boolean portTest(){
+    public static boolean serverPortTest(){
         ServerSocket server=null;
         try {
             server = new ServerSocket(TaskServer.PORT);
@@ -91,6 +91,7 @@ public class ServerTest {
 
     public static boolean serverInteractionTest()
     {
+        //TODO close all sockets!
         Socket outputSocket=null;
         Socket inputSocket=null;
         ServerSocket server = null;

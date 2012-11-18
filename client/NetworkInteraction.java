@@ -8,14 +8,26 @@ import java.io.Serializable;
  * To change this template use File | Settings | File Templates.
  */
 public class NetworkInteraction implements Serializable {
+    private String text = "some text";
+    private TaskTree tree=null;
+
     public String getText() {
         return text;
     }
 
-    String text = "some text";
+    public TaskTree getTree() {
+        return tree;
+    }
+
+    public void setTree(TaskTree tree) {
+        this.tree = tree;
+    }
 
     public NetworkInteraction(String s) {
         text=s;
+    }
+
+    public NetworkInteraction() {
     }
 
     public boolean equals(Object interaction) {
