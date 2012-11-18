@@ -42,7 +42,7 @@ public class ServerTest {
             System.out.println("interaction equality test fails");
             result=false;
         }
-        if (!createResponseTest())
+        if (!processInputTest())
         {
             System.out.println("create response test fails");
             result=false;
@@ -115,7 +115,7 @@ public class ServerTest {
             if (!readInteraction.getText().equals("test string")) throw new Exception("Wrong text arrived");
             resultStream = new ObjectInputStream(outputSocket.getInputStream());
             NetworkInteraction resultInteraction=(NetworkInteraction) resultStream.readObject();
-            if (!(TaskServer.createResponse(readInteraction)).equals(resultInteraction)) return false;
+            if (!(TaskServer.processInput(readInteraction)).equals(resultInteraction)) return false;
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -132,7 +132,7 @@ public class ServerTest {
         }
     }
 
-    public static boolean createResponseTest(){
+    public static boolean processInputTest(){
         //todo implementation
         return true;
     }

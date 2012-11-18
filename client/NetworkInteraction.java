@@ -8,7 +8,7 @@ import java.io.Serializable;
  * To change this template use File | Settings | File Templates.
  */
 public class NetworkInteraction implements Serializable {
-    private String text = "some text";
+    private String text = "some text"; //arbitrary message
     private TaskTree tree=null;
 
     public String getText() {

@@ -1,14 +1,9 @@
 import exceptions.NetworkInteractionIsNotReadyException;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Created with IntelliJ IDEA.
@@ -44,7 +39,7 @@ public class InteractionThread extends Thread {
             out = new ObjectOutputStream(client.getOutputStream());
             in = new ObjectInputStream(client.getInputStream());
             interaction=(NetworkInteraction) in.readObject();
-            out.writeObject(TaskServer.createResponse(interaction));
+            out.writeObject(TaskServer.processInput(interaction));
             out.flush();
             isDone=true;
         } catch (IOException|ClassNotFoundException e) {

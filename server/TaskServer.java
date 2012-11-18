@@ -10,6 +10,7 @@ import java.net.Socket;
  * To change this template use File | Settings | File Templates.
  */
 public class TaskServer {
+    //TODO multiuser SET check
     public static final int PORT = 6969;
     private boolean working=true;
 
@@ -36,7 +37,7 @@ public class TaskServer {
             e.printStackTrace();
         }
     }
-    public static NetworkInteraction createResponse(NetworkInteraction interaction) {
+    public static NetworkInteraction processInput(NetworkInteraction interaction) {
         //TODO implementation
         return interaction;
     }
