@@ -18,6 +18,7 @@ public class TaskClientNetDriver {
 
     public static void saveTree(TaskTree tree) {
         //TODO exceptions to "outside"
+        //TODO DRY this code!
         NetworkInteraction interaction = new NetworkInteraction();
         interaction.setTree(tree);
         Socket socket=null;
