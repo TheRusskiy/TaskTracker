@@ -1,3 +1,5 @@
+package client;
+
 import javax.swing.*;
 
 /**
@@ -8,4 +10,8 @@ import javax.swing.*;
  * To change this template use File | Settings | File Templates.
  */
 public class TaskView {
+     public void doNothing(){
+          // testing
+         System.out.print("testing");
+     }
 }
