@@ -9,7 +9,25 @@ import java.io.Serializable;
  */
 public class NetworkInteraction implements Serializable {
     private String text = "some text"; //arbitrary message
+    private String login;
+    private byte[] encryptedPassword;
     private TaskTree tree=null;
+
+    public String getPassword() {
+        return CipherDriver.decrypt(encryptedPassword, CipherDriver.getSharedKey());
+    }
+
+    public void setPassword(String password) {
+        encryptedPassword=CipherDriver.encrypt(password, CipherDriver.getSharedKey());
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
 
     public String getText() {
         return text;
