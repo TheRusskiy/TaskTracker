@@ -30,3 +30,6 @@ nb-configuration.xml
 # java
 *.class
 *.jar
+
+*.txt
+server_data/

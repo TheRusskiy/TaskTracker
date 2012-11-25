@@ -14,8 +14,7 @@ import java.net.Socket;
  */
 public class InteractionThread extends Thread {
     //TODO timeout!!!(everywhere)
-    //TODO close all sockets!
-    private boolean isDone=false;
+    private volatile boolean isDone=false;
     private NetworkInteraction interaction = null;
     private Socket client =null;
 
@@ -39,17 +38,18 @@ public class InteractionThread extends Thread {
             out = new ObjectOutputStream(client.getOutputStream());
             in = new ObjectInputStream(client.getInputStream());
             interaction=(NetworkInteraction) in.readObject();
-            out.writeObject(TaskServer.processInput(interaction));
+            NetworkInteraction temp=TaskServer.processInput(interaction);
+            out.writeObject(temp);
             out.flush();
             isDone=true;
         } catch (IOException|ClassNotFoundException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         } finally {
             try {
                 if (out!=null) out.close();
                 if (in!=null) in.close();
             } catch (IOException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                e.printStackTrace();
             }
         }
     }

@@ -13,7 +13,16 @@ import java.io.Serializable;
 public class Data implements Serializable{
     //Data fields:
     private String text;
+    private String activityName;
     //TODO spent time field
+
+    public String getActivityName() {
+        return activityName;
+    }
+
+    public void setActivityName(String activityName) {
+        this.activityName = activityName;
+    }
     
     /**
      * Constructor that takes String

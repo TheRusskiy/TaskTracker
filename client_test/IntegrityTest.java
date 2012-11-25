@@ -1,3 +1,6 @@
+import java.io.IOException;
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * User: TheRusskiy
@@ -9,17 +12,62 @@ public class IntegrityTest {
     public static boolean testAll()
     {
         boolean result=true;
-        System.out.println("Failed tests:");
-//        if (!createTaskTree())
+//        if (!createUserTest())
 //        {
-//            System.out.println("create tree:"+createTaskTree());
+//            System.out.println("Create user test fails");
 //            result=false;
 //        }
+        if (!getAvailableTreesTest())
+        {
+            System.out.println("Get available trees test fails");
+            result=false;
+        }
         return result;
+    }
+
+    private static boolean getAvailableTreesTest(){
+        try {
+            final TaskServer taskServer= new TaskServer();
+            Thread t =new Thread(){
+                public void run(){
+                    taskServer.startServer();
+                }
+            };
+            t.start();
+            List<String> trees=TaskClientNetDriver.getAvailableTrees("Dima", "password");
+           taskServer.stopServer();
+            int i=0;
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
+    }
+
+//todo make repeateable
+    private static boolean createUserTest(){
+        try {
+            final TaskServer taskServer= new TaskServer();
+            Thread t =new Thread(){
+                public void run(){
+                    taskServer.startServer();
+                }
+            };
+            t.start();
+            TaskTree tree=TaskClientNetDriver.createUser("Dima", "password");
+            int i=0;
+            taskServer.stopServer();
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
+    }
+
+    public static void startTests(){
+        System.out.println("Integrity test: " + IntegrityTest.testAll());
     }
 
     public static void main(String[] args)
     {
-        IntegrityTest.testAll();
+        startTests();
     }
 }
