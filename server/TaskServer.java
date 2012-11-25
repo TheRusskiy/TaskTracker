@@ -7,6 +7,8 @@ import java.net.ServerSocket;
 import java.util.concurrent.ConcurrentLinkedDeque;
 //Feature multiuser SET check
 //Feature check that user name != key file name
+//FIXME check all directories, if absent => create
+//FIXME alter network communication to contain single integer constant
 /**
  * Created with IntelliJ IDEA.
  * User: TheRusskiy
