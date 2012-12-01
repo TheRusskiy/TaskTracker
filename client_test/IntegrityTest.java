@@ -1,4 +1,7 @@
 import exceptions.NetworkInteractionException;
+import server_network.TaskServer;
+import task_network.TaskClientNetDriver;
+import task_tree.TaskTree;
 
 import java.io.IOException;
 import java.util.List;
@@ -49,7 +52,7 @@ public class IntegrityTest {
     private static boolean createUserTest(){
         try {
 
-            TaskTree tree=TaskClientNetDriver.createUser("Dima2", "password");
+            TaskTree tree= TaskClientNetDriver.createUser("Dima2", "password");
             int i=0;
 
         } catch (IOException|NetworkInteractionException e) {

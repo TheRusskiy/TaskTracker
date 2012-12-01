@@ -1,6 +1,13 @@
+package server_network;
+
+import exceptions.FileManagerException;
 import exceptions.WrongInteractionDataException;
-import tree_content.Data;
-import tree_content.IDGenerator;
+import server_entities.TaskUser;
+import server_persistence.FileManager;
+import task_network.NetworkInteraction;
+import task_tree.Data;
+import task_tree.IDGenerator;
+import task_tree.TaskTree;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -39,7 +46,13 @@ public class TaskServer {
     public void startServer(){
         ServerSocket server=null;
         try {
-            users =FileManager.getUsersFromFile();
+            try{
+                users =FileManager.getUsersFromFile();
+            }
+            catch (FileManagerException e){
+                FileManager.placeToLog(e.getMessage());
+                users=new ConcurrentLinkedDeque<>();
+            }
             server = new ServerSocket(PORT);
             server.setSoTimeout(2000);
             while(working){
@@ -69,7 +82,7 @@ public class TaskServer {
     }
 
     public static NetworkInteraction processInput(NetworkInteraction interaction) {
-        //NetworkInteraction result = new NetworkInteraction();
+        //task_network.NetworkInteraction result = new task_network.NetworkInteraction();
         try {
             switch (interaction.getRequestCode()){
                 case CREATE_NEW_USER:{
@@ -157,8 +170,8 @@ public class TaskServer {
     }
 
     private static TaskUser createNewUser(String login, String password, TaskTree tree) throws WrongInteractionDataException, IOException {
-//        if (FileManager.fileExists(login)){
-//            FileManager.placeToLog("User with this name already exists: "+login);
+//        if (server_persistence.FileManager.fileExists(login)){
+//            server_persistence.FileManager.placeToLog("User with this name already exists: "+login);
 //            throw new WrongInteractionDataException("User with this name already exists: "+login);
 //        }
         FileManager.saveToFile(login, firstTreeName, tree);

@@ -1,4 +1,7 @@
+package task_network;
+
 import exceptions.NetworkInteractionException;
+import task_tree.TaskTree;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

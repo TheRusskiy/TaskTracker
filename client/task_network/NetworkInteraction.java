@@ -1,3 +1,7 @@
+package task_network;
+
+import task_tree.TaskTree;
+
 import java.io.Serializable;
 import java.util.List;
 

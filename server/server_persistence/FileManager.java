@@ -1,8 +1,14 @@
+package server_persistence;
+
+import exceptions.FileManagerException;
+import server_entities.TaskUser;
+
 import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedDeque;
+
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,7 +24,7 @@ public class FileManager {
 
 
 
-    public static ConcurrentLinkedDeque<TaskUser> getUsersFromFile() {
+    public static ConcurrentLinkedDeque<TaskUser> getUsersFromFile() throws FileManagerException {
         try {
             ConcurrentLinkedDeque<TaskUser> tempUsers=loadFromFile(new File(usersFileName));
             if (tempUsers==null){
@@ -30,7 +36,7 @@ public class FileManager {
             e.printStackTrace();
             placeToLog(e.getMessage());
         }
-        throw new RuntimeException("Can't load users file!");
+        throw new FileManagerException("Can't load users file!");
     }
 
     public static void saveUsersToFile(ConcurrentLinkedDeque<TaskUser> usersMap) {

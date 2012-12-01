@@ -1,3 +1,5 @@
+package server_entities;
+
 import exceptions.WrongInteractionDataException;
 
 import java.io.Serializable;
