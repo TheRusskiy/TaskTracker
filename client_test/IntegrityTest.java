@@ -1,3 +1,5 @@
+import exceptions.NetworkInteractionException;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -38,7 +40,7 @@ public class IntegrityTest {
 
             List<String> trees=TaskClientNetDriver.getAvailableTrees("Dima2", "password");
             int i=0;
-        } catch (IOException e) {
+        } catch (IOException|NetworkInteractionException e) {
             return false;
         }
         return true;
@@ -50,7 +52,7 @@ public class IntegrityTest {
             TaskTree tree=TaskClientNetDriver.createUser("Dima2", "password");
             int i=0;
 
-        } catch (IOException e) {
+        } catch (IOException|NetworkInteractionException e) {
             return false;
         }
         return true;

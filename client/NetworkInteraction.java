@@ -15,6 +15,7 @@ public class NetworkInteraction implements Serializable {
         SAVE_TO_SERVER,
         LOAD_FROM_SERVER,
         CREATE_NEW_USER,
+        DELETE_USER,
         GET_AVAILABLE_TREES;
     }
 
@@ -49,7 +50,6 @@ public class NetworkInteraction implements Serializable {
     public RequestCode getRequestCode() {
         return requestCode;
     }
-
 
     private List<String> treeNames;
 
