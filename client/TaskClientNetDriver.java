@@ -24,10 +24,10 @@ public class TaskClientNetDriver {
         interaction.setLogin(login);
         interaction.setPassword(password);
         interaction.setTree(tree);
-        interaction.setSaveToServer();
+        interaction.setRequestCode(NetworkInteraction.RequestCode.SAVE_TO_SERVER);
         interaction.setTreeName(treeName);
         NetworkInteraction result=sendReceive(interaction);
-        return result.isCool();
+        return result.getReplyCode()== NetworkInteraction.ReplyCode.SUCCESS;
         //todo check if result is "successful", if not throw new Exception
     }
 
@@ -35,7 +35,7 @@ public class TaskClientNetDriver {
         NetworkInteraction interaction = new NetworkInteraction();
         interaction.setLogin(login);
         interaction.setPassword(password);
-        interaction.setLoadFromServer();
+        interaction.setRequestCode(NetworkInteraction.RequestCode.LOAD_FROM_SERVER);
         //interaction.setTreeName(treeName);
         TaskTree tree=sendReceive(interaction).getTree();
         return tree;
@@ -45,8 +45,7 @@ public class TaskClientNetDriver {
         NetworkInteraction interaction = new NetworkInteraction();
         interaction.setLogin(login);
         interaction.setPassword(password);
-        interaction.setLoadFromServer();
-        interaction.createNewUser();
+        interaction.setRequestCode(NetworkInteraction.RequestCode.CREATE_NEW_USER);
         TaskTree tree=sendReceive(interaction).getTree();
         return tree;
     }
@@ -55,7 +54,7 @@ public class TaskClientNetDriver {
         NetworkInteraction interaction = new NetworkInteraction();
         interaction.setLogin(login);
         interaction.setPassword(password);
-        interaction.setGetAvailableTrees();
+        interaction.setRequestCode(NetworkInteraction.RequestCode.GET_AVAILABLE_TREES);
         return sendReceive(interaction).getTreeNames();
     }
 

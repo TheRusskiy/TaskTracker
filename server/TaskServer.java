@@ -4,6 +4,7 @@ import tree_content.IDGenerator;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.ConcurrentLinkedDeque;
 //Feature multiuser SET check
 //Feature check that user name != key file name
@@ -22,6 +23,7 @@ public class TaskServer {
     private static ConcurrentLinkedDeque<TaskUser> users;
     private boolean working=true;
 
+
     public static void main(String[] args)
     {
         TaskServer taskServer= new TaskServer();
@@ -39,9 +41,15 @@ public class TaskServer {
         try {
             users =FileManager.getUsersFromFile();
             server = new ServerSocket(PORT);
+            server.setSoTimeout(2000);
             while(working){
+                try{
                 InteractionThread interactionThread = new InteractionThread(server.accept());
                 interactionThread.start();
+                }
+                catch (SocketTimeoutException e) {
+                    System.out.println("Timeout...");
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -63,48 +71,44 @@ public class TaskServer {
     public static NetworkInteraction processInput(NetworkInteraction interaction) {
         //NetworkInteraction result = new NetworkInteraction();
         try {
-        while (true)
-                    {
-                    if (interaction.isCreateNewUser()) {
-                        if (userExists(interaction.getLogin()))
-                            throw new WrongInteractionDataException("User already exist!");
-                        TaskTree newTree = createNewTree();
-                        TaskUser newUser = createNewUser(interaction.getLogin(), interaction.getPassword(), newTree);
-                        insertNewUser(newUser);
-                        FileManager.saveUsersToFile(users);
-                        interaction.setTree(newTree);
-                        interaction.setCool();
+            switch (interaction.getRequestCode()){
+                case CREATE_NEW_USER:{
+                    if (userExists(interaction.getLogin())) {
+                        interaction.setReplyCode(NetworkInteraction.ReplyCode.USER_ALREADY_EXISTS);
                         break;
                     }
-                    {
-                        if (!userExists(interaction.getLogin()))
-                            throw new WrongInteractionDataException("User does not exist!");
-                        if (!correctCredentials(interaction.getLogin(), interaction.getPassword()))
-                            throw new WrongInteractionDataException("Wrong password!");
-                        if (interaction.isGetAvailableTrees())
-                        {
-                            TaskUser user =getUserByLogin(interaction.getLogin());
-                            interaction.setTreeNames(user.getTreeNames());
-                            interaction.setCool();
-                            break;// selection;
-                        }
-                        if (interaction.isLoadFromServer())
-                        {
-                            TaskTree tree = openTree(interaction.getLogin(), interaction.getTreeName());
-                            interaction.setTree(tree);
-                            interaction.setCool();
-                            break;// selection;
-                        }
-                        if (interaction.isSaveToServer())
-                        {
-                            saveTree(interaction.getLogin(), interaction.getTree(), interaction.getTreeName());
-                            interaction.setCool();
-                            break;// selection;
-                        }
-                    }
-                  }
+                    TaskTree newTree = createNewTree();
+                    TaskUser newUser = createNewUser(interaction.getLogin(), interaction.getPassword(), newTree);
+                    insertNewUser(newUser);
+                    FileManager.saveUsersToFile(users);
+                    interaction.setTree(newTree);
+                    interaction.setReplyCode(NetworkInteraction.ReplyCode.SUCCESS);
+                    break;
+                }
+                case GET_AVAILABLE_TREES:{
+                    TaskUser user =getUserByLogin(interaction.getLogin());
+                    interaction.setTreeNames(user.getTreeNames());
+                    interaction.setReplyCode(NetworkInteraction.ReplyCode.SUCCESS);
+                    break;
+                }
+                case LOAD_FROM_SERVER:{
+                    TaskTree tree = openTree(interaction.getLogin(), interaction.getTreeName());
+                    interaction.setTree(tree);
+                    interaction.setReplyCode(NetworkInteraction.ReplyCode.SUCCESS);
+                    break;
+                }
+                case SAVE_TO_SERVER:{
+                    saveTree(interaction.getLogin(), interaction.getTree(), interaction.getTreeName());
+                    interaction.setReplyCode(NetworkInteraction.ReplyCode.SUCCESS);
+                    break;
+                }
+                default:{
+                    interaction.setReplyCode(NetworkInteraction.ReplyCode.UNKNOWN_REQUEST_CODE);
+                    break;
+                }
+            }
         } catch (WrongInteractionDataException | IOException e) {
-            interaction.setNotCool();
+            interaction.setReplyCode(NetworkInteraction.ReplyCode.ERROR);
             if (e instanceof IOException) {
                 interaction.setText("Server File System Error...");
             } else {

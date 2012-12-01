@@ -12,30 +12,31 @@ public class IntegrityTest {
     public static boolean testAll()
     {
         boolean result=true;
-//        if (!createUserTest())
-//        {
-//            System.out.println("Create user test fails");
-//            result=false;
-//        }
+        final TaskServer taskServer= new TaskServer();
+        Thread t =new Thread(){
+            public void run(){
+                taskServer.startServer();
+            }
+        };
+        t.start();
+        if (!createUserTest())
+        {
+            System.out.println("Create user test fails");
+            result=false;
+        }
         if (!getAvailableTreesTest())
         {
             System.out.println("Get available trees test fails");
             result=false;
         }
+        taskServer.stopServer();
         return result;
     }
 
     private static boolean getAvailableTreesTest(){
         try {
-            final TaskServer taskServer= new TaskServer();
-            Thread t =new Thread(){
-                public void run(){
-                    taskServer.startServer();
-                }
-            };
-            t.start();
-            List<String> trees=TaskClientNetDriver.getAvailableTrees("Dima", "password");
-           taskServer.stopServer();
+
+            List<String> trees=TaskClientNetDriver.getAvailableTrees("Dima2", "password");
             int i=0;
         } catch (IOException e) {
             return false;
@@ -43,19 +44,12 @@ public class IntegrityTest {
         return true;
     }
 
-//todo make repeateable
     private static boolean createUserTest(){
         try {
-            final TaskServer taskServer= new TaskServer();
-            Thread t =new Thread(){
-                public void run(){
-                    taskServer.startServer();
-                }
-            };
-            t.start();
-            TaskTree tree=TaskClientNetDriver.createUser("Dima", "password");
+
+            TaskTree tree=TaskClientNetDriver.createUser("Dima2", "password");
             int i=0;
-            taskServer.stopServer();
+
         } catch (IOException e) {
             return false;
         }
