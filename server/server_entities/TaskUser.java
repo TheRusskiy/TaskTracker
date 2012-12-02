@@ -18,6 +18,9 @@ public class TaskUser implements Serializable {
 
     private LinkedList<String> treeNames;
 
+    /**
+     * @return names of all trees this user has.
+     */
     public LinkedList<String> getTreeNames() {
         return treeNames;
     }

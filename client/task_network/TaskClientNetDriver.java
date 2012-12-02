@@ -23,7 +23,10 @@ public class TaskClientNetDriver {
     //TODO ^^^values^^^ from file!!
 
 
-
+    /**
+     * Save tree on the server
+     * @throws NetworkInteractionException if server couldn't process request correctly
+     */
     public static void saveTree(TaskTree tree, String login, String password, String treeName) throws IOException, NetworkInteractionException {
         NetworkInteraction outgoing = new NetworkInteraction();
         outgoing.setLogin(login);
@@ -37,6 +40,10 @@ public class TaskClientNetDriver {
         }
     }
 
+    /**
+     * SLoad tree from the server
+     * @throws NetworkInteractionException if server couldn't process request correctly
+     */
     public static TaskTree loadTree(String login, String password, String treeName) throws IOException, NetworkInteractionException {
         NetworkInteraction outgoing = new NetworkInteraction();
         outgoing.setLogin(login);
@@ -51,6 +58,10 @@ public class TaskClientNetDriver {
         return tree;
     }
 
+    /**
+     * Create new user on the server
+     * @throws NetworkInteractionException if server couldn't process request correctly
+     */
     public static TaskTree createUser(String login, String password) throws IOException, NetworkInteractionException {
         NetworkInteraction outgoing = new NetworkInteraction();
         outgoing.setLogin(login);
@@ -64,6 +75,10 @@ public class TaskClientNetDriver {
         return tree;
     }
 
+    /**
+     * Delete user from the server
+     * @throws NetworkInteractionException if server couldn't process request correctly
+     */
     public static void deleteUser(String login, String password) throws IOException, NetworkInteractionException {
         NetworkInteraction outgoing = new NetworkInteraction();
         outgoing.setLogin(login);
@@ -75,6 +90,10 @@ public class TaskClientNetDriver {
         }
     }
 
+    /**
+     * Delete tree by a name for a given user
+     * @throws NetworkInteractionException if server couldn't process request correctly
+     */
     public static void deleteTree(String login, String password, String treeName) throws IOException, NetworkInteractionException {
         NetworkInteraction outgoing = new NetworkInteraction();
         outgoing.setLogin(login);
@@ -87,6 +106,10 @@ public class TaskClientNetDriver {
         }
     }
 
+    /**
+     * Get list of available trees for a specified user
+     * @throws NetworkInteractionException if server couldn't process request correctly
+     */
     public static List<String> getAvailableTrees(String login, String password) throws IOException, NetworkInteractionException {
         NetworkInteraction outgoing = new NetworkInteraction();
         outgoing.setLogin(login);
@@ -100,6 +123,9 @@ public class TaskClientNetDriver {
     }
 
 
+    /**
+     * Send request and receive response from the server
+     */
     private static NetworkInteraction sendReceive(NetworkInteraction interaction) throws IOException {
         TaskTree tree=null;
         Socket socket=null;

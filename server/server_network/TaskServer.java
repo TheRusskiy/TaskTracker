@@ -16,8 +16,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
 //Feature multiuser SET check
 //Feature check that user name != key file name
-//FIXME check all directories, if absent => create
-//FIXME alter network communication to contain single integer constant
+//TODO "update" tree method
 /**
  * Created with IntelliJ IDEA.
  * User: TheRusskiy
@@ -30,6 +29,7 @@ public class TaskServer {
     public static final String firstTreeName="Rest";
     private static ConcurrentLinkedDeque<TaskUser> users;
     private boolean working=true;
+    public static final int TIMEOUT_DELAY = 2000;
 
 
     public static void main(String[] args)
@@ -38,12 +38,21 @@ public class TaskServer {
         taskServer.startServer();
     }
 
+    /**
+     * Stop server
+     * server will stop accepting new connections
+     * after TIMEOUT_DELAY expires
+     * and save users to HDD
+     */
     public void stopServer(){
         working=false;
         FileManager.saveUsersToFile(users);
     }
 
 
+    /**
+     * Start server, wait in loop for connections, create new thread for each connected client
+     */
     public void startServer(){
         ServerSocket server=null;
         try {
@@ -55,7 +64,7 @@ public class TaskServer {
                 users=new ConcurrentLinkedDeque<>();
             }
             server = new ServerSocket(PORT);
-            server.setSoTimeout(2000);
+            server.setSoTimeout(TIMEOUT_DELAY);
             while(working){
                 try{
                 InteractionThread interactionThread = new InteractionThread(server.accept());
@@ -78,14 +87,26 @@ public class TaskServer {
         }
     }
 
+    /**
+     * Initialize users list
+     * @throws FileManagerException
+     */
     public static void fetchUsers() throws FileManagerException {
         users =FileManager.getUsersFromFile();
     }
 
+    /**
+     * Add new user to list of users
+     */
     private static void insertNewUser(TaskUser user){
         users.add(user);
     }
 
+    /**
+     * Processes information about incoming request
+     * and creates response complying to interaction protocol.
+     * Places all information in logs.
+     */
     public static NetworkInteraction processInput(NetworkInteraction interaction) {
         //task_network.NetworkInteraction result = new task_network.NetworkInteraction();
         try {
@@ -198,14 +219,28 @@ public class TaskServer {
         return interaction;
     }
 
+    /**
+     * Save tree to HDD
+     * @param login user login, corresponds to directory name
+     * @param tree which will be saved
+     * @param treeName name of the tree, corresponds to file name
+     */
     private static void saveTree(String login, TaskTree tree, String treeName) throws IOException {
         FileManager.saveToFile(login, treeName, tree);
     }
 
+    /**
+     * Open tree from HDD
+     * @param login user login, corresponds to directory name
+     * @param treeName name of the tree, corresponds to file name
+     */
     private static TaskTree openTree(String login, String treeName) throws IOException {
         return FileManager.loadFromFile(login, treeName);
     }
 
+    /**
+     * Check user with specified login exists and has specified password
+     */
     private static boolean correctCredentials(String login, String password) {
         Boolean validLogin=false;
         TaskUser user=null;
@@ -220,6 +255,9 @@ public class TaskServer {
         return false;
     }
 
+    /**
+     * Check if user exists
+     */
     private static boolean userExists(String login) {
         for (TaskUser o : users){
             if (o.getLogin().equals(login)) return true;
@@ -227,6 +265,11 @@ public class TaskServer {
         return false;
     }
 
+    /**
+     * Creates new tree with default values.
+     * Responsible for instantiating tree object for newly created user
+     * @return
+     */
     private static TaskTree createNewTree() {
         IDGenerator idGenerator = new IDGenerator();
         Data data = new Data("New tree");
@@ -235,6 +278,13 @@ public class TaskServer {
         return tree;
     }
 
+    /**
+     * Create new TaskUser and corresponding folder on HDD
+     * @param login login of a new user
+     * @param password password of a new user
+     * @param tree first tree, which will be linked with this user
+     * @return TaskUser object
+     */
     private static TaskUser createNewUser(String login, String password, TaskTree tree) throws WrongInteractionDataException, IOException {
 //        if (server_persistence.FileManager.fileExists(login)){
 //            server_persistence.FileManager.placeToLog("User with this name already exists: "+login);
@@ -248,6 +298,9 @@ public class TaskServer {
         return user;
     }
 
+    /**
+     * Returns a TaskUser object by specified login
+     */
     private static TaskUser getUserByLogin(String login) throws WrongInteractionDataException {
         for (TaskUser o : users){
             if (o.getLogin().equals(login)) return o;

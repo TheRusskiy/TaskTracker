@@ -29,6 +29,9 @@ public class CipherDriver {
         CipherDriver.sharedKey = sharedKey;
     }
 
+    /**
+     * Get SHA1 hash for a given message
+     */
     public static String getSHA1(String text) {
         try {
             final MessageDigest md = MessageDigest.getInstance("SHA-1");
@@ -46,6 +49,10 @@ public class CipherDriver {
         throw new RuntimeException("Error generating SHA-1");
     }
 
+    /**
+     * Encrypt given message with specified key
+     * @return bytes of encrypted message
+     */
     public static byte[] encrypt(String message, String keyText) {
         final byte[] initialKeyBytes = keyText.getBytes();
         final byte[] keyBytes=new byte[24];
@@ -87,6 +94,10 @@ public class CipherDriver {
         throw new RuntimeException("Error encrypting!");
     }
 
+    /**
+     * Decrypt message given in a byte form using specified key
+     * @return String representation decrypted message
+     */
     public static String decrypt(byte[] message, String keyText){
         try {
             final byte[] initialKeyBytes = keyText.getBytes();

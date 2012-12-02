@@ -14,6 +14,9 @@ import java.util.List;
  */
 public class NetworkInteraction implements Serializable {
 
+    /**
+     * Codes for request from the CLIENT
+     */
     public enum RequestCode {
         NO_CODE,
         SAVE_TO_SERVER,
@@ -24,6 +27,9 @@ public class NetworkInteraction implements Serializable {
         GET_AVAILABLE_TREES;
     }
 
+    /**
+     * Codes for replies from the SERVER
+     */
     public enum ReplyCode {
         NO_CODE,
         SUCCESS,
