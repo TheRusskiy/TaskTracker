@@ -38,12 +38,11 @@ public class TaskClientNetDriver {
     }
 
     public static TaskTree loadTree(String login, String password, String treeName) throws IOException, NetworkInteractionException {
-        //FIXME specific tree
         NetworkInteraction outgoing = new NetworkInteraction();
         outgoing.setLogin(login);
         outgoing.setPassword(password);
         outgoing.setRequestCode(NetworkInteraction.RequestCode.LOAD_FROM_SERVER);
-        //interaction.setTreeName(treeName);
+        outgoing.setTreeName(treeName);
         NetworkInteraction incoming=sendReceive(outgoing);
         if (incoming.getReplyCode()!= NetworkInteraction.ReplyCode.SUCCESS) {
             throw new NetworkInteractionException(incoming.getReplyCode());
@@ -70,6 +69,18 @@ public class TaskClientNetDriver {
         outgoing.setLogin(login);
         outgoing.setPassword(password);
         outgoing.setRequestCode(NetworkInteraction.RequestCode.DELETE_USER);
+        NetworkInteraction incoming=sendReceive(outgoing);
+        if (incoming.getReplyCode()!= NetworkInteraction.ReplyCode.SUCCESS) {
+            throw new NetworkInteractionException(incoming.getReplyCode());
+        }
+    }
+
+    public static void deleteTree(String login, String password, String treeName) throws IOException, NetworkInteractionException {
+        NetworkInteraction outgoing = new NetworkInteraction();
+        outgoing.setLogin(login);
+        outgoing.setPassword(password);
+        outgoing.setTreeName(treeName);
+        outgoing.setRequestCode(NetworkInteraction.RequestCode.DELETE_TREE);
         NetworkInteraction incoming=sendReceive(outgoing);
         if (incoming.getReplyCode()!= NetworkInteraction.ReplyCode.SUCCESS) {
             throw new NetworkInteractionException(incoming.getReplyCode());

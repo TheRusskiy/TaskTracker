@@ -20,6 +20,7 @@ public class NetworkInteraction implements Serializable {
         LOAD_FROM_SERVER,
         CREATE_NEW_USER,
         DELETE_USER,
+        DELETE_TREE,
         GET_AVAILABLE_TREES;
     }
 
@@ -29,6 +30,7 @@ public class NetworkInteraction implements Serializable {
         USER_ALREADY_EXISTS,
         UNKNOWN_REQUEST_CODE,
         USER_DOES_NOT_EXIST,
+        TREE_DOES_NOT_EXIST,
         WRONG_CREDENTIALS,
         ERROR;
     }

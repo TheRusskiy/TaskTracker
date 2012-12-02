@@ -51,10 +51,11 @@ public class FileManager {
 
     public static <ObjectType> ObjectType loadFromFile(String folder, String file) throws IOException {
         File userFolder=new File(System.getProperty("user.dir"), folder);
-        return loadFromFile(new File(userFolder, file));
+        return loadFromFile(new File(userFolder.getName()+File.separator+file));
     }
     public static <ObjectType> ObjectType loadFromFile(File file) throws IOException {
         file=new File(storeFolder, file.getPath());
+
         if (!file.exists()){
             file.getParentFile().mkdirs();
             file.createNewFile();

@@ -5,7 +5,9 @@ import task_network.NetworkInteraction;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.*;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 /**
  * Created with IntelliJ IDEA.
@@ -95,7 +97,6 @@ public class ServerTest {
 
     public static boolean serverInteractionTest()
     {
-        //TODO close all sockets!
         Socket outputSocket=null;
         Socket inputSocket=null;
         ServerSocket server = null;
@@ -106,12 +107,17 @@ public class ServerTest {
             InetAddress address=InetAddress.getLocalHost();
             outputSocket = new Socket(address, ServerTest.TEST_PORT);
             inputSocket=server.accept();
+            TaskServer.fetchUsers();
             InteractionThread thread = new InteractionThread(inputSocket);
             thread.start();
             ous = new ObjectOutputStream(outputSocket.getOutputStream());
-            ous.writeObject(new NetworkInteraction("test string"));
+            NetworkInteraction networkInteraction= new NetworkInteraction("test string");
+            networkInteraction.setLogin("login");
+            networkInteraction.setPassword("password");
+            ous.writeObject(networkInteraction);
             ous.flush();
             thread.join();
+            while (!thread.isDone()){}
             NetworkInteraction readInteraction;
             if (!thread.isDone()) throw new Exception("Join finished but no 'IsDone'!");
             readInteraction=thread.getNetworkInteraction();

@@ -48,7 +48,7 @@ public class TaskServer {
         ServerSocket server=null;
         try {
             try{
-                users =FileManager.getUsersFromFile();
+                fetchUsers();
             }
             catch (FileManagerException e){
                 FileManager.placeToLog(e.getMessage());
@@ -78,6 +78,10 @@ public class TaskServer {
         }
     }
 
+    public static void fetchUsers() throws FileManagerException {
+        users =FileManager.getUsersFromFile();
+    }
+
     private static void insertNewUser(TaskUser user){
         users.add(user);
     }
@@ -87,6 +91,7 @@ public class TaskServer {
         try {
             if (interaction.getRequestCode()!= NetworkInteraction.RequestCode.CREATE_NEW_USER){
                 if(!correctCredentials(interaction.getLogin(), interaction.getPassword())){
+                    FileManager.placeToLog(NetworkInteraction.ReplyCode.WRONG_CREDENTIALS.name());
                     throw new WrongInteractionDataException(NetworkInteraction.ReplyCode.WRONG_CREDENTIALS);
                 }
             }
@@ -94,6 +99,7 @@ public class TaskServer {
                 case CREATE_NEW_USER:{
                     if (userExists(interaction.getLogin())) {
                         interaction.setReplyCode(NetworkInteraction.ReplyCode.USER_ALREADY_EXISTS);
+                        FileManager.placeToLog(NetworkInteraction.ReplyCode.USER_ALREADY_EXISTS.name());
                         break;
                     }
                     TaskTree newTree = createNewTree();
@@ -117,6 +123,8 @@ public class TaskServer {
                     break;
                 }
                 case SAVE_TO_SERVER:{
+                    TaskUser user =getUserByLogin(interaction.getLogin());
+                    user.addTreeName(interaction.getTreeName());
                     saveTree(interaction.getLogin(), interaction.getTree(), interaction.getTreeName());
                     interaction.setReplyCode(NetworkInteraction.ReplyCode.SUCCESS);
                     break;
@@ -129,19 +137,32 @@ public class TaskServer {
                         FileManager.deleteFile(user.getLogin(),treeToDelete);
                     }
                     FileManager.deleteFile(user.getLogin());
-                    assert (!users.contains(user));
+                    interaction.setReplyCode(NetworkInteraction.ReplyCode.SUCCESS);
+                    break;
+                }
+                case DELETE_TREE:{
+                    TaskUser user =getUserByLogin(interaction.getLogin());
+                    if (!user.getTreeNames().contains(interaction.getTreeName())){
+                        interaction.setReplyCode(NetworkInteraction.ReplyCode.TREE_DOES_NOT_EXIST);
+                        FileManager.placeToLog(NetworkInteraction.ReplyCode.TREE_DOES_NOT_EXIST.name());
+                        break;
+                    }
+                    user.getTreeNames().removeFirstOccurrence(interaction.getTreeName());
+                    FileManager.deleteFile(user.getLogin(),interaction.getTreeName());
                     interaction.setReplyCode(NetworkInteraction.ReplyCode.SUCCESS);
                     break;
                 }
                 default:{
                     interaction.setReplyCode(NetworkInteraction.ReplyCode.UNKNOWN_REQUEST_CODE);
+                    FileManager.placeToLog(NetworkInteraction.ReplyCode.UNKNOWN_REQUEST_CODE.name());
                     break;
                 }
             }
         } catch (WrongInteractionDataException e) {
+            if (e.getReplyCode()==null){
             interaction.setReplyCode(NetworkInteraction.ReplyCode.ERROR);
             interaction.setText(e.getMessage());
-            FileManager.placeToLog(e.getMessage());
+            FileManager.placeToLog(e.getMessage()); }
         }
         catch (IOException e) {
             interaction.setReplyCode(NetworkInteraction.ReplyCode.ERROR);
@@ -205,6 +226,7 @@ public class TaskServer {
         for (TaskUser o : users){
             if (o.getLogin().equals(login)) return o;
         }
+        FileManager.placeToLog(NetworkInteraction.ReplyCode.USER_DOES_NOT_EXIST.name());
         throw new WrongInteractionDataException(NetworkInteraction.ReplyCode.USER_DOES_NOT_EXIST);
     }
 }
