@@ -103,6 +103,7 @@ public class TaskClientNetDriverTest {
 
                         //faking transmission from server:
                         fakeInteraction.setTree(tree);
+                        fakeInteraction.setReplyCode(NetworkInteraction.ReplyCode.SUCCESS);
                         fakeServerOutput.writeObject(fakeInteraction);
                         fakeServerOutput.flush();
                     } catch (Exception e) {
@@ -171,6 +172,7 @@ public class TaskClientNetDriverTest {
                         }
                         //faking transmission from server:
                         fakeInteraction.setTree(tree);
+                        fakeInteraction.setReplyCode(NetworkInteraction.ReplyCode.SUCCESS);
                         fakeServerOutput.writeObject(fakeInteraction);
                     } catch (IOException|ClassNotFoundException e) {
                         e.printStackTrace();

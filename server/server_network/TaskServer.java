@@ -85,6 +85,11 @@ public class TaskServer {
     public static NetworkInteraction processInput(NetworkInteraction interaction) {
         //task_network.NetworkInteraction result = new task_network.NetworkInteraction();
         try {
+            if (interaction.getRequestCode()!= NetworkInteraction.RequestCode.CREATE_NEW_USER){
+                if(!correctCredentials(interaction.getLogin(), interaction.getPassword())){
+                    throw new WrongInteractionDataException(NetworkInteraction.ReplyCode.WRONG_CREDENTIALS);
+                }
+            }
             switch (interaction.getRequestCode()){
                 case CREATE_NEW_USER:{
                     if (userExists(interaction.getLogin())) {
@@ -200,6 +205,6 @@ public class TaskServer {
         for (TaskUser o : users){
             if (o.getLogin().equals(login)) return o;
         }
-        throw new WrongInteractionDataException("No such user exist!");
+        throw new WrongInteractionDataException(NetworkInteraction.ReplyCode.USER_DOES_NOT_EXIST);
     }
 }

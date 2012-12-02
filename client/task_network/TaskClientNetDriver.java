@@ -38,6 +38,7 @@ public class TaskClientNetDriver {
     }
 
     public static TaskTree loadTree(String login, String password, String treeName) throws IOException, NetworkInteractionException {
+        //FIXME specific tree
         NetworkInteraction outgoing = new NetworkInteraction();
         outgoing.setLogin(login);
         outgoing.setPassword(password);

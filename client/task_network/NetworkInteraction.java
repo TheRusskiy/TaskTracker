@@ -28,6 +28,8 @@ public class NetworkInteraction implements Serializable {
         SUCCESS,
         USER_ALREADY_EXISTS,
         UNKNOWN_REQUEST_CODE,
+        USER_DOES_NOT_EXIST,
+        WRONG_CREDENTIALS,
         ERROR;
     }
 
