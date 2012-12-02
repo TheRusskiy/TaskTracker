@@ -31,8 +31,10 @@ public class TaskClientNetDriver {
         outgoing.setTree(tree);
         outgoing.setRequestCode(NetworkInteraction.RequestCode.SAVE_TO_SERVER);
         outgoing.setTreeName(treeName);
-        NetworkInteraction result=sendReceive(outgoing);
-        if (result.getReplyCode()!= NetworkInteraction.ReplyCode.SUCCESS) throw new NetworkInteractionException();
+        NetworkInteraction incoming=sendReceive(outgoing);
+        if (incoming.getReplyCode()!= NetworkInteraction.ReplyCode.SUCCESS) {
+            throw new NetworkInteractionException(incoming.getReplyCode());
+        }
     }
 
     public static TaskTree loadTree(String login, String password, String treeName) throws IOException, NetworkInteractionException {
@@ -42,7 +44,9 @@ public class TaskClientNetDriver {
         outgoing.setRequestCode(NetworkInteraction.RequestCode.LOAD_FROM_SERVER);
         //interaction.setTreeName(treeName);
         NetworkInteraction incoming=sendReceive(outgoing);
-        if (incoming.getReplyCode()!= NetworkInteraction.ReplyCode.SUCCESS) throw new NetworkInteractionException();
+        if (incoming.getReplyCode()!= NetworkInteraction.ReplyCode.SUCCESS) {
+            throw new NetworkInteractionException(incoming.getReplyCode());
+        }
         TaskTree tree=incoming.getTree();
         return tree;
     }
@@ -53,7 +57,9 @@ public class TaskClientNetDriver {
         outgoing.setPassword(password);
         outgoing.setRequestCode(NetworkInteraction.RequestCode.CREATE_NEW_USER);
         NetworkInteraction incoming=sendReceive(outgoing);
-        if (incoming.getReplyCode()!= NetworkInteraction.ReplyCode.SUCCESS) throw new NetworkInteractionException();
+        if (incoming.getReplyCode()!= NetworkInteraction.ReplyCode.SUCCESS) {
+            throw new NetworkInteractionException(incoming.getReplyCode());
+        }
         TaskTree tree=incoming.getTree();
         return tree;
     }
@@ -63,8 +69,10 @@ public class TaskClientNetDriver {
         outgoing.setLogin(login);
         outgoing.setPassword(password);
         outgoing.setRequestCode(NetworkInteraction.RequestCode.DELETE_USER);
-        NetworkInteraction result=sendReceive(outgoing);
-        if (result.getReplyCode()!= NetworkInteraction.ReplyCode.SUCCESS) throw new NetworkInteractionException();
+        NetworkInteraction incoming=sendReceive(outgoing);
+        if (incoming.getReplyCode()!= NetworkInteraction.ReplyCode.SUCCESS) {
+            throw new NetworkInteractionException(incoming.getReplyCode());
+        }
     }
 
     public static List<String> getAvailableTrees(String login, String password) throws IOException, NetworkInteractionException {
@@ -73,7 +81,9 @@ public class TaskClientNetDriver {
         outgoing.setPassword(password);
         outgoing.setRequestCode(NetworkInteraction.RequestCode.GET_AVAILABLE_TREES);
         NetworkInteraction incoming=sendReceive(outgoing);
-        if (incoming.getReplyCode()!= NetworkInteraction.ReplyCode.SUCCESS) throw new NetworkInteractionException();
+        if (incoming.getReplyCode()!= NetworkInteraction.ReplyCode.SUCCESS) {
+            throw new NetworkInteractionException(incoming.getReplyCode());
+        }
         return incoming.getTreeNames();
     }
 

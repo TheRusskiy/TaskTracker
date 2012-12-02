@@ -4,6 +4,7 @@ import exceptions.FileManagerException;
 import server_entities.TaskUser;
 
 import java.io.*;
+import java.security.AccessControlException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -100,6 +101,24 @@ public class FileManager {
         finally {
             if (fileOutputStream!=null) fileOutputStream.close();
             if (oos!=null) oos.close();
+        }
+    }
+
+    public static void deleteFile(String folder, String file) throws AccessControlException {
+        deleteFile(new File(folder, file));
+    }
+
+    public static void deleteFile(String file) throws AccessControlException {
+        deleteFile(new File(file));
+    }
+
+    public static void deleteFile(File file) throws AccessControlException{
+        try{
+        file=new File((new File(System.getProperty("user.dir"), storeFolder)),file.getPath());
+        file.delete();}
+        catch (AccessControlException e){
+            placeToLog(e.getMessage() + "; Error deleting file \"" + file.getPath() + "\"");
+            throw e;
         }
     }
 

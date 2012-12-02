@@ -12,6 +12,7 @@ import task_tree.TaskTree;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.SocketTimeoutException;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
 //Feature multiuser SET check
 //Feature check that user name != key file name
@@ -115,18 +116,31 @@ public class TaskServer {
                     interaction.setReplyCode(NetworkInteraction.ReplyCode.SUCCESS);
                     break;
                 }
+                case DELETE_USER:{
+                    TaskUser user =getUserByLogin(interaction.getLogin());
+                    users.removeFirstOccurrence(user);
+                    List<String> treesToDelete=user.getTreeNames();
+                    for(String treeToDelete:treesToDelete){
+                        FileManager.deleteFile(user.getLogin(),treeToDelete);
+                    }
+                    FileManager.deleteFile(user.getLogin());
+                    assert (!users.contains(user));
+                    interaction.setReplyCode(NetworkInteraction.ReplyCode.SUCCESS);
+                    break;
+                }
                 default:{
                     interaction.setReplyCode(NetworkInteraction.ReplyCode.UNKNOWN_REQUEST_CODE);
                     break;
                 }
             }
-        } catch (WrongInteractionDataException | IOException e) {
+        } catch (WrongInteractionDataException e) {
             interaction.setReplyCode(NetworkInteraction.ReplyCode.ERROR);
-            if (e instanceof IOException) {
-                interaction.setText("Server File System Error...");
-            } else {
-                interaction.setText(e.getMessage());
-            }
+            interaction.setText(e.getMessage());
+            FileManager.placeToLog(e.getMessage());
+        }
+        catch (IOException e) {
+            interaction.setReplyCode(NetworkInteraction.ReplyCode.ERROR);
+            interaction.setText("Server File System Error...");
             FileManager.placeToLog(e.getMessage());
         }
         return interaction;

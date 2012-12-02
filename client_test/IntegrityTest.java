@@ -34,6 +34,11 @@ public class IntegrityTest {
             System.out.println("Get available trees test fails");
             result=false;
         }
+        if (!deleteUserTest())
+        {
+            System.out.println("Delete user test fails");
+            result=false;
+        }
         taskServer.stopServer();
         return result;
     }
@@ -41,7 +46,7 @@ public class IntegrityTest {
     private static boolean getAvailableTreesTest(){
         try {
 
-            List<String> trees=TaskClientNetDriver.getAvailableTrees("Dima2", "password");
+            List<String> trees=TaskClientNetDriver.getAvailableTrees("TestUser", "password");
             int i=0;
         } catch (IOException|NetworkInteractionException e) {
             return false;
@@ -52,10 +57,28 @@ public class IntegrityTest {
     private static boolean createUserTest(){
         try {
 
-            TaskTree tree= TaskClientNetDriver.createUser("Dima2", "password");
+            TaskTree tree= TaskClientNetDriver.createUser("TestUser", "password");
             int i=0;
 
         } catch (IOException|NetworkInteractionException e) {
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean deleteUserTest(){
+        try {
+
+            TaskClientNetDriver.deleteUser("TestUser", "password");
+            int i=0;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        catch (NetworkInteractionException e) {
+            e.printStackTrace();
+            System.err.println(e.getReply());
             return false;
         }
         return true;
