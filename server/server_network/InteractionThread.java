@@ -1,4 +1,7 @@
+package server_network;
+
 import exceptions.NetworkInteractionIsNotReadyException;
+import task_network.NetworkInteraction;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -18,19 +21,39 @@ public class InteractionThread extends Thread {
     private NetworkInteraction interaction = null;
     private Socket client =null;
 
+    /**
+     * Indicates whether Thread is finished all calculations.
+     * Intended for multi-thread safety
+     */
     public boolean isDone() {
         return isDone;
     }
 
+    /**
+     * Creates new InteractionThread.
+     * Thread will use IO streams of a given socket.
+     */
     public InteractionThread(Socket client) {
         this.client=client;
     }
 
+    /**
+     * @return response to client's request.
+     * Throws Exception if processing weren't finished.
+     * !!! Response gets send to client independently of this method !!!
+     */
     public NetworkInteraction getNetworkInteraction() {
         if(!isDone) throw new NetworkInteractionIsNotReadyException();
         return interaction;
     }
 
+
+    /**
+     * Read request from a given socket.
+     * Create response.
+     * Send response.
+     * Set isDone to true.
+     */
     public void run(){
         ObjectInputStream in = null;
         ObjectOutputStream out = null;

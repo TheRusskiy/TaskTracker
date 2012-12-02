@@ -1,4 +1,4 @@
-package client;
+package task_view;
 
 import javax.swing.*;
 

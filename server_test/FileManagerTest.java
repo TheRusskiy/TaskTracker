@@ -1,3 +1,5 @@
+import server_persistence.FileManager;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -17,17 +19,43 @@ public class FileManagerTest {
             System.out.println("File exists test fails");
             result=false;
         }
+        if (!deleteFileTest())
+        {
+            System.out.println("Delete file test fails");
+            result=false;
+        }
         return result;
     }
 
     private static boolean fileExistsTest(){
-        File file = new File(System.getProperty("user.dir")+"qwertyuioopasddfghjk");
+        File file = new File("fileManagerTestFile");
+        file.deleteOnExit();
         try {
-            file.createNewFile();
+            FileManager.saveToFile(file, new Integer(0));
         } catch (IOException e) {
             return false;
         }
-        if (!FileManager.fileExists("qwertyuioopasddfghjk")) return false;
+        if (!FileManager.fileExists("fileManagerTestFile")) return false;
+        return true;
+    }
+
+    private static boolean deleteFileTest(){
+        File file = new File("fileManagerTestFile");
+        //file.deleteOnExit();
+        try {
+            FileManager.saveToFile(file, new Integer(0));
+            FileManager.saveToFile("file_test_folder", "file_test_file", new Integer(0));
+
+            FileManager.deleteFile(file);
+            FileManager.deleteFile("file_test_folder", "file_test_file");
+            FileManager.deleteFile(new File("file_test_folder"));
+
+            if (FileManager.fileExists(file.getName())) return false;
+            File file2=new File("file_test_folder", "file_test_file");
+            if (FileManager.fileExists(file2.getName())) return false;
+        } catch (IOException e) {
+            return false;
+        }
         return true;
     }
 

@@ -1,5 +1,7 @@
 package exceptions;
 
+import task_network.NetworkInteraction;
+
 /**
  * Created with IntelliJ IDEA.
  * User: TheRusskiy
@@ -8,23 +10,33 @@ package exceptions;
  * To change this template use File | Settings | File Templates.
  */
 public class WrongInteractionDataException extends Exception {
+    NetworkInteraction.ReplyCode replyCode;
+
+    public NetworkInteraction.ReplyCode getReplyCode() {
+        return replyCode;
+    }
+
     public WrongInteractionDataException() {
-        super();    //To change body of overridden methods use File | Settings | File Templates.
+        super();
+    }
+
+    public WrongInteractionDataException(NetworkInteraction.ReplyCode replyCode) {
+        this.replyCode=replyCode;
     }
 
     public WrongInteractionDataException(String message) {
-        super(message);    //To change body of overridden methods use File | Settings | File Templates.
+        super(message);
     }
 
     public WrongInteractionDataException(String message, Throwable cause) {
-        super(message, cause);    //To change body of overridden methods use File | Settings | File Templates.
+        super(message, cause);
     }
 
     public WrongInteractionDataException(Throwable cause) {
-        super(cause);    //To change body of overridden methods use File | Settings | File Templates.
+        super(cause);
     }
 
     protected WrongInteractionDataException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);    //To change body of overridden methods use File | Settings | File Templates.
+        super(message, cause, enableSuppression, writableStackTrace);
     }
 }

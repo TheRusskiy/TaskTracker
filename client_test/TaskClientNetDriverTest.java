@@ -1,5 +1,8 @@
-import tree_content.Data;
-import tree_content.IDGenerator;
+import task_network.NetworkInteraction;
+import task_network.TaskClientNetDriver;
+import task_tree.Data;
+import task_tree.IDGenerator;
+import task_tree.TaskTree;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -100,6 +103,7 @@ public class TaskClientNetDriverTest {
 
                         //faking transmission from server:
                         fakeInteraction.setTree(tree);
+                        fakeInteraction.setReplyCode(NetworkInteraction.ReplyCode.SUCCESS);
                         fakeServerOutput.writeObject(fakeInteraction);
                         fakeServerOutput.flush();
                     } catch (Exception e) {
@@ -168,6 +172,7 @@ public class TaskClientNetDriverTest {
                         }
                         //faking transmission from server:
                         fakeInteraction.setTree(tree);
+                        fakeInteraction.setReplyCode(NetworkInteraction.ReplyCode.SUCCESS);
                         fakeServerOutput.writeObject(fakeInteraction);
                     } catch (IOException|ClassNotFoundException e) {
                         e.printStackTrace();

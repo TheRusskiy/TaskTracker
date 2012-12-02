@@ -1,8 +1,15 @@
+package server_persistence;
+
+import exceptions.FileManagerException;
+import server_entities.TaskUser;
+
 import java.io.*;
+import java.security.AccessControlException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedDeque;
+
 
 /**
  * Created with IntelliJ IDEA.
@@ -14,11 +21,13 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 public class FileManager {
     private static String logFileName="server_log.txt";
     private static String usersFileName="users.txt";
-    private static String storeFolder="server_data";
+    private static String storeFolder="server_data"; //where to store all stuff
 
 
-
-    public static ConcurrentLinkedDeque<TaskUser> getUsersFromFile() {
+    /**
+     * @return users list from a file
+     */
+    public static ConcurrentLinkedDeque<TaskUser> getUsersFromFile() throws FileManagerException {
         try {
             ConcurrentLinkedDeque<TaskUser> tempUsers=loadFromFile(new File(usersFileName));
             if (tempUsers==null){
@@ -30,9 +39,12 @@ public class FileManager {
             e.printStackTrace();
             placeToLog(e.getMessage());
         }
-        throw new RuntimeException("Can't load users file!");
+        throw new FileManagerException("Can't load users file!");
     }
 
+    /**
+     * Save users back to HDD
+     */
     public static void saveUsersToFile(ConcurrentLinkedDeque<TaskUser> usersMap) {
         try {
             saveToFile(new File(usersFileName), usersMap);
@@ -42,12 +54,20 @@ public class FileManager {
         }
     }
 
+    /**
+     * Load object from a file which lies in a folder
+     */
     public static <ObjectType> ObjectType loadFromFile(String folder, String file) throws IOException {
         File userFolder=new File(System.getProperty("user.dir"), folder);
-        return loadFromFile(new File(userFolder, file));
+        return loadFromFile(new File(userFolder.getName()+File.separator+file));
     }
+
+    /**
+     * Load object from a file
+     */
     public static <ObjectType> ObjectType loadFromFile(File file) throws IOException {
         file=new File(storeFolder, file.getPath());
+
         if (!file.exists()){
             file.getParentFile().mkdirs();
             file.createNewFile();
@@ -72,11 +92,18 @@ public class FileManager {
         throw new IOException("Error while writing to \""+file.getPath()+"\"");
     }
 
+    /**
+     * Save object to a file which lies in a folder
+     */
     public static <ObjectType> void saveToFile(String folder, String file, ObjectType objectToSave) throws IOException {
         //File userFolder=new File(System.getProperty("user.dir"), storeFolder);
         //userFolder=new File(userFolder, folder);
         saveToFile(new File(folder, file), objectToSave);
     }
+
+    /**
+     * Save object to a file
+     */
     public static <ObjectType> void saveToFile(File file, ObjectType objectToSave) throws IOException {
         file=new File((new File(System.getProperty("user.dir"), storeFolder)),file.getPath());
         file.getParentFile().mkdirs();
@@ -97,6 +124,36 @@ public class FileManager {
         }
     }
 
+    /**
+     * Delete file in a folder
+     */
+    public static void deleteFile(String folder, String file) throws AccessControlException {
+        deleteFile(new File(folder, file));
+    }
+
+    /**
+     * Delete file
+     */
+    public static void deleteFile(String file) throws AccessControlException {
+        deleteFile(new File(file));
+    }
+
+    /**
+     * Delete file
+     */
+    public static void deleteFile(File file) throws AccessControlException{
+        try{
+        file=new File((new File(System.getProperty("user.dir"), storeFolder)),file.getPath());
+        file.delete();}
+        catch (AccessControlException e){
+            placeToLog(e.getMessage() + "; Error deleting file \"" + file.getPath() + "\"");
+            throw e;
+        }
+    }
+
+    /**
+     * Place message to log file.
+     */
     public static void placeToLog(String message) {
         try {
             DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -109,6 +166,9 @@ public class FileManager {
         }
     }
 
+    /**
+     * Check if file with this name already exists
+     */
     public static boolean fileExists(String fileName){
         File currDir = new File(System.getProperty("user.dir"));
         currDir=new File(currDir.getPath(), storeFolder);

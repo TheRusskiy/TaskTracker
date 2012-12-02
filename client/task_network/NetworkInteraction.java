@@ -1,3 +1,7 @@
+package task_network;
+
+import task_tree.TaskTree;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -9,16 +13,58 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class NetworkInteraction implements Serializable {
+
+    /**
+     * Codes for request from the CLIENT
+     */
+    public enum RequestCode {
+        NO_CODE,
+        SAVE_TO_SERVER,
+        LOAD_FROM_SERVER,
+        CREATE_NEW_USER,
+        DELETE_USER,
+        DELETE_TREE,
+        GET_AVAILABLE_TREES;
+    }
+
+    /**
+     * Codes for replies from the SERVER
+     */
+    public enum ReplyCode {
+        NO_CODE,
+        SUCCESS,
+        USER_ALREADY_EXISTS,
+        UNKNOWN_REQUEST_CODE,
+        USER_DOES_NOT_EXIST,
+        TREE_DOES_NOT_EXIST,
+        WRONG_CREDENTIALS,
+        ERROR;
+    }
+
     private String text = "some text"; //arbitrary message
     private String login;
     private byte[] encryptedPassword;
     private TaskTree tree=null;
-    private boolean saveToServer=false;
-    private boolean loadFromServer=true;
-    private boolean isCool=true;
-    private boolean createNewUser=false;
-    private boolean getAvailableTrees=false;
     private String treeName;
+    private RequestCode requestCode=RequestCode.NO_CODE;
+    private ReplyCode replyCode=ReplyCode.NO_CODE;
+
+    public ReplyCode getReplyCode() {
+        return replyCode;
+    }
+
+    public void setReplyCode(ReplyCode replyCode) {
+        this.replyCode = replyCode;
+    }
+
+    public void setRequestCode(RequestCode requestCode) {
+        this.requestCode = requestCode;
+    }
+
+    public RequestCode getRequestCode() {
+        return requestCode;
+    }
+
     private List<String> treeNames;
 
     public List<String> getTreeNames() {
@@ -37,54 +83,10 @@ public class NetworkInteraction implements Serializable {
         this.treeName = treeName;
     }
 
-    public boolean isCreateNewUser() {
-        return createNewUser;
-    }
-
-    public void createNewUser() {
-        createNewUser = true;
-    }
-
-    public void setGetAvailableTrees() {
-        getAvailableTrees = true;
-    }
-    public boolean isGetAvailableTrees() {
-        return getAvailableTrees;
-    }
-
     public void setText(String text) {
         this.text = text;
     }
 
-    public boolean isCool() {
-        return isCool;
-    }
-
-    public void setCool() {
-        isCool = true;
-    }
-
-    public void setNotCool() {
-        isCool = false;
-    }
-
-    public boolean isSaveToServer() {
-        return saveToServer;
-    }
-
-    public void setSaveToServer() {
-        saveToServer = true;
-        loadFromServer=false;
-    }
-
-    public boolean isLoadFromServer() {
-        return loadFromServer;
-    }
-
-    public void setLoadFromServer() {
-        loadFromServer = true;
-        saveToServer=false;
-    }
 
     public String getPassword() {
         return CipherDriver.decrypt(encryptedPassword, CipherDriver.getSharedKey());
@@ -122,6 +124,7 @@ public class NetworkInteraction implements Serializable {
     }
 
     public boolean equals(Object interaction) {
+        //FIXME
         NetworkInteraction interaction1=(NetworkInteraction) interaction;
         if (interaction==null) return false;
         if (interaction1.getText().equals(this.getText())) return true;

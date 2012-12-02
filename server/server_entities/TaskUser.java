@@ -1,3 +1,5 @@
+package server_entities;
+
 import exceptions.WrongInteractionDataException;
 
 import java.io.Serializable;
@@ -14,11 +16,14 @@ public class TaskUser implements Serializable {
     private String password;
     private String login;
 
+    private LinkedList<String> treeNames;
+
+    /**
+     * @return names of all trees this user has.
+     */
     public LinkedList<String> getTreeNames() {
         return treeNames;
     }
-
-    private LinkedList<String> treeNames;
 
     public TaskUser() {
         treeNames = new LinkedList<String>();
