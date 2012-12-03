@@ -168,6 +168,17 @@ public class TaskServer {
                             + interaction.getTreeName());
                     break;
                 }
+                case UPDATE_TREE:{
+                    TaskUser user =getUserByLogin(interaction.getLogin());
+                    user.ensureTreeExists(interaction.getTreeName());
+                    updateTree(interaction.getLogin(), interaction.getTree(), interaction.getTreeName());
+                    interaction.setReplyCode(NetworkInteraction.ReplyCode.SUCCESS);
+                    FileManager.placeToLog(NetworkInteraction.ReplyCode.SUCCESS.name()+": "
+                            + NetworkInteraction.RequestCode.UPDATE_TREE+": "
+                            + interaction.getLogin()+": "
+                            + interaction.getTreeName());
+                    break;
+                }
                 case DELETE_USER:{
                     TaskUser user =getUserByLogin(interaction.getLogin());
                     users.removeFirstOccurrence(user);
@@ -226,6 +237,16 @@ public class TaskServer {
      * @param treeName name of the tree, corresponds to file name
      */
     private static void saveTree(String login, TaskTree tree, String treeName) throws IOException {
+        FileManager.saveToFile(login, treeName, tree);
+    }
+
+    /**
+     * Replace old tree on HDD
+     * @param login user login, corresponds to directory name
+     * @param tree which will be updated
+     * @param treeName name of the tree, corresponds to file name
+     */
+    private static void updateTree(String login, TaskTree tree, String treeName) throws IOException {
         FileManager.saveToFile(login, treeName, tree);
     }
 

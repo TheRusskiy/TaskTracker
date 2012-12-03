@@ -24,6 +24,7 @@ public class NetworkInteraction implements Serializable {
         CREATE_NEW_USER,
         DELETE_USER,
         DELETE_TREE,
+        UPDATE_TREE,
         GET_AVAILABLE_TREES;
     }
 

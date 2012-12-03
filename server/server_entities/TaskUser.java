@@ -50,6 +50,10 @@ public class TaskUser implements Serializable {
         treeNames.add(activityName);
     }
 
+    public void ensureTreeExists(String activityName) throws WrongInteractionDataException {
+        if (!treeNames.contains(activityName)) throw new WrongInteractionDataException("Tree with this name does not exist!");
+    }
+
     public boolean equals(Object taskUser){
          if (taskUser==null) return false;
          if (!( taskUser instanceof TaskUser)) return false;
