@@ -19,6 +19,7 @@ public class IntegrityTest {
     private static final String TEST_USER="TestUser";
     private static final String TEST_PASSWORD="TestPassword";
     private static final String TEST_TREE_NAME="TestTree";
+    private static final String TEST_TREE_ACTIVITY_AFTER_UPDATE ="TestTreeUpdated";
     private static List<String> betweenTestTreeNames;
     public static boolean testAll()
     {
@@ -35,9 +36,14 @@ public class IntegrityTest {
             System.out.println("Create user test fails");
             result=false;
         }
-        if (!saveTreeTest())
+        if (!saveTreeTest(TEST_TREE_NAME))
         {
             System.out.println("Save tree test fails");
+            result=false;
+        }
+        if (!updateTreeTest(TEST_TREE_NAME, TEST_TREE_ACTIVITY_AFTER_UPDATE))
+        {
+            System.out.println("Update tree test fails");
             result=false;
         }
         if (!getAvailableTreesTest())
@@ -92,20 +98,35 @@ public class IntegrityTest {
         try {
 
             TaskTree tree=TaskClientNetDriver.loadTree(TEST_USER, TEST_PASSWORD, TEST_TREE_NAME);
-            if (!tree.getData().getActivityName().equals(TEST_TREE_NAME)) return false;
+            if (!tree.getData().getActivityName().equals(TEST_TREE_ACTIVITY_AFTER_UPDATE)) return false;
         } catch (IOException|NetworkInteractionException e) {
             return false;
         }
         return true;
     }
 
-    private static boolean saveTreeTest(){
+    private static boolean saveTreeTest(String treeName){
         try {
             IDGenerator idGenerator = new IDGenerator();
             Data data = new Data("TestString");
-            data.setActivityName(TEST_TREE_NAME);
+            data.setActivityName(treeName);
             TaskTree tree = new TaskTree(idGenerator, data);
-            TaskClientNetDriver.saveTree(tree, TEST_USER, TEST_PASSWORD, TEST_TREE_NAME);
+            TaskClientNetDriver.saveTree(tree, TEST_USER, TEST_PASSWORD, treeName);
+        } catch (IOException|NetworkInteractionException e) {
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean updateTreeTest(String treeName, String newActivityName){
+        try {
+            IDGenerator idGenerator = new IDGenerator();
+            Data data = new Data("TestString");
+            data.setActivityName(TEST_TREE_ACTIVITY_AFTER_UPDATE);
+            TaskTree tree = new TaskTree(idGenerator, data);
+            TaskClientNetDriver.updateTree(tree, TEST_USER, TEST_PASSWORD, treeName);
+            TaskTree loadedTree = TaskClientNetDriver.loadTree(TEST_USER, TEST_PASSWORD, treeName);
+            if (!loadedTree.getData().getActivityName().equals(TEST_TREE_ACTIVITY_AFTER_UPDATE)) return false;
         } catch (IOException|NetworkInteractionException e) {
             return false;
         }

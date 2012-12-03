@@ -41,6 +41,23 @@ public class TaskClientNetDriver {
     }
 
     /**
+     * Replace tree on the server with a given name with new tree
+     * @throws NetworkInteractionException if server couldn't process request correctly
+     */
+    public static void updateTree(TaskTree tree, String login, String password, String treeName) throws IOException, NetworkInteractionException {
+        NetworkInteraction outgoing = new NetworkInteraction();
+        outgoing.setLogin(login);
+        outgoing.setPassword(password);
+        outgoing.setTree(tree);
+        outgoing.setRequestCode(NetworkInteraction.RequestCode.UPDATE_TREE);
+        outgoing.setTreeName(treeName);
+        NetworkInteraction incoming=sendReceive(outgoing);
+        if (incoming.getReplyCode()!= NetworkInteraction.ReplyCode.SUCCESS) {
+            throw new NetworkInteractionException(incoming.getReplyCode());
+        }
+    }
+
+    /**
      * SLoad tree from the server
      * @throws NetworkInteractionException if server couldn't process request correctly
      */
