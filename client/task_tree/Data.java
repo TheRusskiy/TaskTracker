@@ -16,6 +16,11 @@ public class Data implements Serializable{
     private String activityName;
     //TODO spent time field
 
+    public String toString(){
+        if (activityName!=null)return activityName;
+        return text;
+    }
+
     public String getActivityName() {
         return activityName;
     }

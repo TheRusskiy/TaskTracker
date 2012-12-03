@@ -14,16 +14,15 @@ import exceptions.IDGeneratorsDoNotMatchException;
 import exceptions.IDNotFoundException;
 import exceptions.NoParentTreeException;
 
+import javax.swing.tree.TreeNode;
 import java.io.*;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  *
  * @author TheRusskiy
  */
-public class TaskTree implements Serializable, Cloneable{
+public class TaskTree implements Serializable, Cloneable, TreeNode{
     private IDGenerator idGenerator;
     private ID id;
     private Data data;
@@ -32,12 +31,72 @@ public class TaskTree implements Serializable, Cloneable{
     private TaskTree parent;
     public static final boolean ID_EQUALITY=true;
 
+    public String toString(){
+        return getData().toString();
+    }
 
+    /**
+     * Returns the number of children TreeNodes the receiver contains.
+     */
+    @Override
+    public int getChildCount() {
+        return children.size();
+    }
+
+    /**
+     * Returns the children of the receiver as an Enumeration.
+     */
+    @Override
+    public Enumeration children() {
+        return Collections.enumeration(children);
+    }
+
+    /**
+     * Returns true if the receiver is a leaf.
+     */
+    @Override
+    public boolean isLeaf() {
+        return children.size()==0;
+    }
+
+    /**
+     * Returns the index of node in the receivers children. If the receiver does not contain node, -1 will be returned.
+     */
+    @Override
+    public int getIndex(TreeNode node) {
+        return children.indexOf(node);
+    }
+
+    /**
+     * Returns the child TreeNode at index childIndex.
+     */
+    @Override
+    public TreeNode getChildAt(int childIndex) {
+        return children.get(childIndex);
+    }
+
+    /**
+     * Returns true if the receiver allows children.
+     */
+    @Override
+    public boolean getAllowsChildren() {
+        return true;
+    }
+
+    /**
+     * @return the parent TreeNode of the receiver.
+     */
+    public TreeNode getParent() {
+        return parent;
+    }
+
+
+    //___________________________________________________________________________________________________
 
     /**
      * @return parent of this task_tree.TaskTree
      */
-    public TaskTree getParent() {
+    private TaskTree getTaskParent() {
         return parent;
     }
 
@@ -369,7 +428,7 @@ public class TaskTree implements Serializable, Cloneable{
         else found= this.find(id);
         if (found==null) throw new IDNotFoundException("Can't delete node,"
                 + "because it can't be found");
-        TaskTree foundParent = found.getParent();
+        TaskTree foundParent = found.getTaskParent();
         if (foundParent!=null)
         {
             foundParent.excludeFromChildren(found.getID());
