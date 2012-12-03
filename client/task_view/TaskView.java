@@ -1,6 +1,6 @@
 package task_view;
 
-import javax.swing.*;
+import task_controller.TaskController;
 
 /**
  * Created with IntelliJ IDEA.
@@ -10,8 +10,15 @@ import javax.swing.*;
  * To change this template use File | Settings | File Templates.
  */
 public class TaskView {
-     public void doNothing(){
-          // testing
-         System.out.print("testing");
-     }
+    TaskController controller;
+
+    public TaskController getController() {
+        return controller;
+    }
+
+    public TaskView(final TaskController controller){
+        this.controller=controller;
+        controller.setView(this);
+
+    }
 }
