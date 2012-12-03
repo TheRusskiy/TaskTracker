@@ -217,10 +217,8 @@ public class TaskServer {
                 }
             }
         } catch (WrongInteractionDataException e) {
-            if (e.getReplyCode()==null){
-            interaction.setReplyCode(NetworkInteraction.ReplyCode.ERROR);
-            interaction.setText(e.getMessage());
-            FileManager.placeToLog(e.getMessage()); }
+            interaction.setReplyCode(e.getReplyCode());
+            FileManager.placeToLog(e.getReplyCode().toString());
         }
         catch (IOException e) {
             interaction.setReplyCode(NetworkInteraction.ReplyCode.ERROR);

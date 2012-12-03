@@ -38,6 +38,7 @@ public class NetworkInteraction implements Serializable {
         UNKNOWN_REQUEST_CODE,
         USER_DOES_NOT_EXIST,
         TREE_DOES_NOT_EXIST,
+        TREE_ALREADY_EXISTS,
         WRONG_CREDENTIALS,
         ERROR;
     }

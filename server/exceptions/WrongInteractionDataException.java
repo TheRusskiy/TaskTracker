@@ -16,27 +16,27 @@ public class WrongInteractionDataException extends Exception {
         return replyCode;
     }
 
-    public WrongInteractionDataException() {
-        super();
-    }
+//    public WrongInteractionDataException() {
+//        super();
+//    }
 
     public WrongInteractionDataException(NetworkInteraction.ReplyCode replyCode) {
         this.replyCode=replyCode;
     }
-
-    public WrongInteractionDataException(String message) {
-        super(message);
-    }
-
-    public WrongInteractionDataException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public WrongInteractionDataException(Throwable cause) {
-        super(cause);
-    }
-
-    protected WrongInteractionDataException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
+//
+//    public WrongInteractionDataException(String message) {
+//        super(message);
+//    }
+//
+//    public WrongInteractionDataException(String message, Throwable cause) {
+//        super(message, cause);
+//    }
+//
+//    public WrongInteractionDataException(Throwable cause) {
+//        super(cause);
+//    }
+//
+//    protected WrongInteractionDataException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+//        super(message, cause, enableSuppression, writableStackTrace);
+//    }
 }

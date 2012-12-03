@@ -9,8 +9,6 @@ import task_network.NetworkInteraction.ReplyCode;
 public class NetworkInteractionException extends Exception {
     private ReplyCode reply;
 
-    public NetworkInteractionException() {
-    }
     public NetworkInteractionException(ReplyCode reply) {
         this.reply=reply;
     }
@@ -19,7 +17,4 @@ public class NetworkInteractionException extends Exception {
         return reply;
     }
 
-    public NetworkInteractionException(String msg) {
-        super(msg);
-    }
 }

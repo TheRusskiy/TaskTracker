@@ -1,6 +1,7 @@
 package server_entities;
 
 import exceptions.WrongInteractionDataException;
+import task_network.NetworkInteraction;
 
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -46,12 +47,12 @@ public class TaskUser implements Serializable {
     }
 
     public void addTreeName(String activityName) throws WrongInteractionDataException {
-        if (treeNames.contains(activityName)) throw new WrongInteractionDataException("Tree with this name already exists!");
+        if (treeNames.contains(activityName)) throw new WrongInteractionDataException(NetworkInteraction.ReplyCode.TREE_ALREADY_EXISTS);
         treeNames.add(activityName);
     }
 
     public void ensureTreeExists(String activityName) throws WrongInteractionDataException {
-        if (!treeNames.contains(activityName)) throw new WrongInteractionDataException("Tree with this name does not exist!");
+        if (!treeNames.contains(activityName)) throw new WrongInteractionDataException(NetworkInteraction.ReplyCode.TREE_DOES_NOT_EXIST);
     }
 
     public boolean equals(Object taskUser){
