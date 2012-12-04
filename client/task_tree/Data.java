@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package tree_content;
+package task_tree;
 
 import java.io.Serializable;
 
@@ -13,7 +13,21 @@ import java.io.Serializable;
 public class Data implements Serializable{
     //Data fields:
     private String text;
+    private String activityName;
     //TODO spent time field
+
+    public String toString(){
+        if (activityName!=null)return activityName;
+        return text;
+    }
+
+    public String getActivityName() {
+        return activityName;
+    }
+
+    public void setActivityName(String activityName) {
+        this.activityName = activityName;
+    }
     
     /**
      * Constructor that takes String

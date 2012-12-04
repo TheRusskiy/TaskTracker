@@ -1,4 +1,4 @@
-/**
+package task_tree; /**
  * Created with IntelliJ IDEA.
  * User: TheRusskiy
  * Date: 10.11.12
@@ -10,17 +10,19 @@
  * and open the template in the editor.
  */
 
+import exceptions.IDGeneratorsDoNotMatchException;
+import exceptions.IDNotFoundException;
+import exceptions.NoParentTreeException;
+
+import javax.swing.tree.TreeNode;
 import java.io.*;
 import java.util.*;
-
-import exceptions.*;
-import tree_content.*;
 
 /**
  *
  * @author TheRusskiy
  */
-public class TaskTree implements Serializable, Cloneable{
+public class TaskTree implements Serializable, Cloneable, TreeNode{
     private IDGenerator idGenerator;
     private ID id;
     private Data data;
@@ -29,18 +31,78 @@ public class TaskTree implements Serializable, Cloneable{
     private TaskTree parent;
     public static final boolean ID_EQUALITY=true;
 
-
+    public String toString(){
+        return getData().toString();
+    }
 
     /**
-     * @return parent of this TaskTree
+     * Returns the number of children TreeNodes the receiver contains.
      */
-    public TaskTree getParent() {
+    @Override
+    public int getChildCount() {
+        return children.size();
+    }
+
+    /**
+     * Returns the children of the receiver as an Enumeration.
+     */
+    @Override
+    public Enumeration children() {
+        return Collections.enumeration(children);
+    }
+
+    /**
+     * Returns true if the receiver is a leaf.
+     */
+    @Override
+    public boolean isLeaf() {
+        return children.size()==0;
+    }
+
+    /**
+     * Returns the index of node in the receivers children. If the receiver does not contain node, -1 will be returned.
+     */
+    @Override
+    public int getIndex(TreeNode node) {
+        return children.indexOf(node);
+    }
+
+    /**
+     * Returns the child TreeNode at index childIndex.
+     */
+    @Override
+    public TreeNode getChildAt(int childIndex) {
+        return children.get(childIndex);
+    }
+
+    /**
+     * Returns true if the receiver allows children.
+     */
+    @Override
+    public boolean getAllowsChildren() {
+        return true;
+    }
+
+    /**
+     * @return the parent TreeNode of the receiver.
+     */
+    public TreeNode getParent() {
+        return parent;
+    }
+
+
+    //___________________________________________________________________________________________________
+
+    /**
+     * @return parent of this task_tree.TaskTree
+     */
+    private TaskTree getTaskParent() {
         return parent;
     }
 
 
     /**
-     * @return IDGenerator of this TaskTree
+     * @return IDGenerator of this task_tree.TaskTree
      */
         public IDGenerator getIDGenerator() {
         return idGenerator;
@@ -49,9 +111,9 @@ public class TaskTree implements Serializable, Cloneable{
 
 
     /**
-     * @param generator new IDGenerator for this TaskTree
+     * @param generator new IDGenerator for this task_tree.TaskTree
      * @deprecated - BE CAREFUL, DO NOT USE, REALLY, NEVER!!!
-     * TaskTree consistency at danger!
+     * task_tree.TaskTree consistency at danger!
      */
     @Deprecated
         private void setIDGenerator(IDGenerator generator) {
@@ -61,7 +123,7 @@ public class TaskTree implements Serializable, Cloneable{
 
 
     /**
-     * @param parent set parent to this TaskTree
+     * @param parent set parent to this task_tree.TaskTree
      */
         private void setParent(TaskTree parent) {
         this.parent=parent;
@@ -102,7 +164,7 @@ public class TaskTree implements Serializable, Cloneable{
 
 
     /**
-     * @return data that this TaskTree contains
+     * @return data that this task_tree.TaskTree contains
      */
         public Data getData() {
         return this.data;
@@ -110,11 +172,11 @@ public class TaskTree implements Serializable, Cloneable{
 
 
     /**
-     * Adds new TaskTree to the one with specified id.
-     * Checks if new TaskTree has the same IDGenerator,
-     * if false, then change all IDs of a new TaskTree according
+     * Adds new task_tree.TaskTree to the one with specified id.
+     * Checks if new task_tree.TaskTree has the same IDGenerator,
+     * if false, then change all IDs of a new task_tree.TaskTree according
      * to current IDGenerator.
-     * @param id ID of a Node to which you want to attach new TaskTree
+     * @param id ID of a Node to which you want to attach new task_tree.TaskTree
      */
         public void add(ID id, TaskTree TaskTree) {
         find(id).add(TaskTree);
@@ -123,18 +185,18 @@ public class TaskTree implements Serializable, Cloneable{
 
 
     /**
-     * Adds new TaskTree, to the children of current TaskTree.
-     * Checks if new TaskTree has the same IDGenerator,k
+     * Adds new task_tree.TaskTree, to the children of current task_tree.TaskTree.
+     * Checks if new task_tree.TaskTree has the same IDGenerator,k
      * if false, then throws IDGeneratorsDoNotMatchException
      */
         public void add(TaskTree TaskTree) {
         //!!!Be careful when use,
-        //Do not add TaskTrees which are already in this TaskTree!
+        //Do not add TaskTrees which are already in this task_tree.TaskTree!
         //safety overhead is too big!
         if (this.idGenerator!=TaskTree.getIDGenerator())
         {
-            System.err.println("Added TaskTree has different IDGenerator");
-            throw new IDGeneratorsDoNotMatchException("Added TaskTree has different IDGenerator");
+            System.err.println("Added task_tree.TaskTree has different IDGenerator");
+            throw new IDGeneratorsDoNotMatchException("Added task_tree.TaskTree has different IDGenerator");
         }
         children.add(TaskTree);
         TaskTree.setParent(this);
@@ -143,7 +205,7 @@ public class TaskTree implements Serializable, Cloneable{
 
 
     /**
-     * Append to parent's list of TaskTree children
+     * Append to parent's list of task_tree.TaskTree children
      * and delete all links that lead to itself
      */
         public void split(){
@@ -159,7 +221,7 @@ public class TaskTree implements Serializable, Cloneable{
 
     /**
      * @param id
-     * @return TaskTree with specified ID
+     * @return task_tree.TaskTree with specified ID
      */
         public TaskTree find(ID id) {
         if (this.id.equals(id)) return this;
@@ -196,7 +258,7 @@ public class TaskTree implements Serializable, Cloneable{
 
     /**
      * @param data
-     * @return TaskTree with specified Data
+     * @return task_tree.TaskTree with specified Data
      */
         public TaskTree find(Data data) {
         if (this.data.equals(data)) return this;
@@ -214,7 +276,7 @@ public class TaskTree implements Serializable, Cloneable{
 
 
     /**
-     * @param path where to save current TaskTree
+     * @param path where to save current task_tree.TaskTree
      */
         public void saveToFile(File path) throws FileNotFoundException, IOException{
         FileOutputStream fos=null;
@@ -235,7 +297,7 @@ public class TaskTree implements Serializable, Cloneable{
 
     /**
      * @param path
-     * @return TaskTree from the specified path
+     * @return task_tree.TaskTree from the specified path
      */
         public TaskTree loadFromFile(File path) throws FileNotFoundException, IOException, ClassNotFoundException{
         FileInputStream fis=null;
@@ -255,7 +317,7 @@ public class TaskTree implements Serializable, Cloneable{
     /**
      * @return clone of self with THE SAME IDs!!
      */
-        protected TaskTree clone() {
+        public TaskTree clone() {
         ByteArrayOutputStream baos=null;
         ByteArrayInputStream bais=null;
         ObjectInputStream ois =null;
@@ -294,7 +356,7 @@ public class TaskTree implements Serializable, Cloneable{
     /**
      * @param id ID of a node you want to get a copy off
      * @param newGenerator IDGenerator that will be used to assign new IDs
-     * (use IDGenerator of a TaskTree, to which you want attach this copy)
+     * (use IDGenerator of a task_tree.TaskTree, to which you want attach this copy)
      * @return deep copy with NEW IDs
      */
         public TaskTree copy(ID id, IDGenerator newGenerator) {
@@ -323,7 +385,7 @@ public class TaskTree implements Serializable, Cloneable{
 
 
     /**
-     * @param id ID of a DIRECT child TaskTree to be deleted
+     * @param id ID of a DIRECT child task_tree.TaskTree to be deleted
      * throws IDNotFoundException
      * @deprecated - not sure if this method is useful for anything
      * other than 'inside' implementation
@@ -357,7 +419,7 @@ public class TaskTree implements Serializable, Cloneable{
 
 
     /**
-     * @param id ID of a TaskTree to be deleted
+     * @param id ID of a task_tree.TaskTree to be deleted
      * throws IDNotFoundException(Runtime exception)
      */
         public void delete(ID id) {
@@ -366,7 +428,7 @@ public class TaskTree implements Serializable, Cloneable{
         else found= this.find(id);
         if (found==null) throw new IDNotFoundException("Can't delete node,"
                 + "because it can't be found");
-        TaskTree foundParent = found.getParent();
+        TaskTree foundParent = found.getTaskParent();
         if (foundParent!=null)
         {
             foundParent.excludeFromChildren(found.getID());
@@ -388,7 +450,7 @@ public class TaskTree implements Serializable, Cloneable{
 
 
     /**
-     * @return ID of this TaskTree
+     * @return ID of this task_tree.TaskTree
      */
         public ID getID()
     {
@@ -398,22 +460,22 @@ public class TaskTree implements Serializable, Cloneable{
 
 
     /**
-     * @param id new ID for this TaskTree
+     * @param id new ID for this task_tree.TaskTree
      * @deprecated - BE CAREFULL, DO NOT USE, REALLY, NEVER!!!
-     * TaskTree consistency at danger!
+     * task_tree.TaskTree consistency at danger!
      */
     @Deprecated
         private void setID(ID id)
     {
         //Thin ice here...
-        //Do not f*** consistency of this TaskTree!!!
+        //Do not f*** consistency of this task_tree.TaskTree!!!
         //To big overhead if you want to check every time
         this.id=id;
     }
 
 
     /**
-     * @return List<ID> of IDs this TaskTree and it's children contains
+     * @return List<ID> of IDs this task_tree.TaskTree and it's children contains
      * @deprecated - not sure if this method is useful for anything
      * other than 'inside' implementation
      */
@@ -467,7 +529,7 @@ public class TaskTree implements Serializable, Cloneable{
 
 
     /**
-     * sorts TaskTree, so that children ID always bigger than one parent has
+     * sorts task_tree.TaskTree, so that children ID always bigger than one parent has
      * switches isSorted to "true"
      * @deprecated - can't find a reason to use this method. Useless shit =(
      */
