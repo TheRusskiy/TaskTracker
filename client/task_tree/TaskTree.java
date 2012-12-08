@@ -1,4 +1,5 @@
-package task_tree; /**
+package task_tree;
+/**
  * Created with IntelliJ IDEA.
  * User: TheRusskiy
  * Date: 10.11.12
@@ -80,7 +81,7 @@ public class TaskTree implements Serializable, Cloneable, TreeNode{
      */
     @Override
     public boolean getAllowsChildren() {
-        return true;
+        return children.size()>0;
     }
 
     /**

@@ -1,22 +1,18 @@
 ############
 ## Windows
-############
 
 # Windows image file caches
 Thumbs.db
-
 # global
 *.lnk
 *.tmp
 *.temp
-
 # idea
 *.iml
 *.ipr
 *.iws
 .idea/
 out/
-
 # netbeans
 nbproject/private/
 nbproject/
@@ -26,10 +22,11 @@ dist/
 nbdist/
 nbactions.xml
 nb-configuration.xml
-
 # java
 *.class
 *.jar
 
 *.txt
+/server_data/
+
 server_data/
