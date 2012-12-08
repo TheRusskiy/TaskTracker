@@ -4,7 +4,11 @@ import task_controller.TaskController;
 import task_tree.TaskTree;
 
 import javax.swing.*;
+import javax.swing.border.SoftBevelBorder;
 import java.awt.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Created with IntelliJ IDEA.
@@ -24,7 +28,6 @@ public class TaskView extends JFrame {
     public TaskView(final TaskController controller){
         this.controller=controller;
         controller.setView(this);
-
     }
 
     private TaskTree[] trees;
@@ -33,7 +36,7 @@ public class TaskView extends JFrame {
 
         super("TaskTracker");
         this.trees = trees;
-        setSize(600, 400); //Dimension???
+        setSize(600, 400);
         setJMenuBar(createJMenu());
         add(setJPanels());
 
@@ -53,20 +56,40 @@ public class TaskView extends JFrame {
         jmenubar.add(edit);
         jmenubar.add(conn);
         jmenubar.add(help);
-        JMenuItem nw = new JMenuItem("Load...");
+        JMenuItem login = new JMenuItem("Log In...");
+        JMenuItem signup = new JMenuItem("Sign Up...");
+        JMenuItem nw = new JMenuItem("Load Tasks");
         JMenuItem sv = new JMenuItem("Save");
         JMenuItem svall = new JMenuItem("Save All");
+        file.add(login);
+        file.add(signup);
+        file.addSeparator();
         file.add(nw);
+        file.addSeparator();
         file.add(sv);
         file.add(svall);
         JMenuItem cp = new JMenuItem("Copy");
         JMenuItem pst = new JMenuItem("Paste");
+        JMenuItem rename = new JMenuItem("Rename...");
+        JMenuItem select = new JMenuItem("Select As Active Task");
+        JMenuItem split = new JMenuItem("Split");
+        JMenuItem clone = new JMenuItem("Clone");
         edit.add(cp);
         edit.add(pst);
-        JMenuItem cnct = new JMenuItem("Connect..."); // automatically??
+        edit.addSeparator();
+        edit.add(select);
+        edit.add(rename);
+        edit.add(split);
+        edit.add(clone);
+        JMenuItem cnct = new JMenuItem("Connect...");
         JMenuItem dscnct = new JMenuItem("Disconnect");
+        JMenuItem setup = new JMenuItem("Settings...");
+
+
         conn.add(cnct);
         conn.add(dscnct);
+        conn.addSeparator();
+        conn.add(setup);
         return jmenubar;
     }
 
@@ -75,16 +98,33 @@ public class TaskView extends JFrame {
         basic.setLayout(new BorderLayout(3,3));
         basic.add(setTreePane(), BorderLayout.CENTER);
         basic.add(setControlPanel(), BorderLayout.EAST);
+        basic.add(setStatusPanel(), BorderLayout.SOUTH);
         basic.setVisible(true);
         return basic;
     }
-
+    //TODO choose another layout manager to avoid these fat buttons
     private JPanel setControlPanel(){
         JPanel control = new JPanel();
-        control.setLayout(new GridLayout(10,1,3,3));
-        control.add(new JButton("Create New..."));
-        control.add(new JButton("Add..."));
-        control.add(new JButton("Split"));
+        control.setMaximumSize(new Dimension(300, 50));
+        control.setLayout(new GridLayout(10, 1, 3, 3));
+        JButton loginbutton = new JButton("Log In...");
+        control.add(loginbutton);
+        JButton signupbutton = new JButton("Sign Up...");
+        control.add(signupbutton);
+        JButton select = new JButton("Select As Active Task");
+        control.add(select);
+        JButton createnewbutton = new JButton("Create New...");
+        control.add(createnewbutton);
+        JButton addbutton = new JButton("Add...");
+        control.add(addbutton);
+        JButton editbutton = new JButton("Edit...");
+        control.add(editbutton);
+        JButton splitbutton = new JButton("Split");
+        control.add(splitbutton);
+        JButton clonebutton = new JButton("Clone");
+        control.add(clonebutton);
+        JButton save = new JButton("Save All Tasks");
+        control.add(save);
         control.setVisible(true);
         return control;
     }
@@ -92,12 +132,22 @@ public class TaskView extends JFrame {
     private JTabbedPane setTreesTabbedPane(){
 
         JTabbedPane tp = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
-        tp.setPreferredSize(new Dimension(100,100));
+        tp.setMinimumSize(new Dimension(100, 50));
+
         for (int i=0; i<trees.length; i++){
             JTree tree = new JTree(trees[i]);
             tree.setShowsRootHandles(true);
-            tree.setEditable(true);
-            tp.add("Tree_"+i, tree);
+            JPanel jp = new JPanel();
+            jp.setLayout(new BorderLayout());
+            JScrollPane jsp = new JScrollPane(tree);
+            jsp.setVisible(true);
+            JPanel jp1 = new JPanel();
+            jp1.add(new JLabel("Some information about selected task"));
+            jp1.add(new JButton("Close"));
+            jp.add(jsp, BorderLayout.CENTER);
+            jp.add(jp1, BorderLayout.SOUTH);
+            jp.setVisible(true);
+            tp.add("Tree_"+i, jp);
         }
         tp.setVisible(true);
         return tp;
@@ -112,14 +162,25 @@ public class TaskView extends JFrame {
         return sp;
     }
 
-    private JPanel setAvailableTreesScrollPane() {
-        JPanel p = new JPanel();
-        p.setBackground(Color.WHITE);
+    private JScrollPane setAvailableTreesScrollPane() {
         JList list = new JList(trees);
-        JScrollPane jsp = new JScrollPane(p);
-        p.add(list);
-        p.setMinimumSize(new Dimension(100,50));
+        JScrollPane jsp = new JScrollPane(list);
+        jsp.setMinimumSize(new Dimension(100,50));
         jsp.setVisible(true);
-        return p;
+        return jsp;
+    }
+
+    private JPanel setStatusPanel(){
+        JPanel statuspanel = new JPanel();
+        statuspanel.setLayout(new FlowLayout());
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Calendar cal = Calendar.getInstance();
+        statuspanel.add(new JLabel(dateFormat.format(cal.getTime())));
+        statuspanel.setBorder(new SoftBevelBorder(1));
+        statuspanel.add(new JLabel("   |   "));
+        statuspanel.add(new JLabel("Some extra information about connection status " +
+                "or(and) active task"));
+        statuspanel.setVisible(true);
+        return statuspanel;
     }
 }
