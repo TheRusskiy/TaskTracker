@@ -40,7 +40,7 @@ public class TaskViewTest {
 
     public static void main(String[] args)
     {
-        TaskViewTest.testAll();
+        //TaskViewTest.testAll();
         TaskViewTest.shittyTest();
     }
 }

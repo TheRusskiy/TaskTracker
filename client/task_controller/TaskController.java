@@ -70,7 +70,7 @@ public class TaskController {
             throw new ControllerException();
         }
     }
-
+    //TODO List<TaskTree> or TaskTree[] as return parameter
     public List<String> getAvailableTrees(String login, String password) throws ControllerException {
         try {
             List<String> result=TaskClientNetDriver.getAvailableTrees(login, password);
