@@ -215,10 +215,11 @@ public class TaskView extends JFrame {
         list.addListSelectionListener(
                 new ListSelectionListener() {
                     @Override
-                    //TODO avoid opening of same tab twice
                     public void valueChanged(ListSelectionEvent e) {
-                        Object selected = list.getSelectedValue();
-                        setTreesTabbedPane(selected.toString(), list.getSelectedIndex());
+                        if (e.getValueIsAdjusting()){
+                            Object selected = list.getSelectedValue();
+                            setTreesTabbedPane(selected.toString(), list.getSelectedIndex());
+                        }
                     }
                 }
         );

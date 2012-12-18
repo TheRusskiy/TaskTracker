@@ -1,3 +1,4 @@
+import task_controller.TaskController;
 import task_tree.Data;
 import task_tree.IDGenerator;
 import task_tree.TaskTree;
@@ -35,7 +36,8 @@ public class TaskViewTest {
         t2.add(t3);
 
         //System.out.println(tt.getAllowsChildren());
-        TaskView tv = new TaskView(new TaskTree[] {tt, t2});
+        TaskController controller = new TaskController();
+        TaskView tv = new TaskView(new TaskTree[] {tt, t2}, controller);
     }
 
     public static void main(String[] args)
