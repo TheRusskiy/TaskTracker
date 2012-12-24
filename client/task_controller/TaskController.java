@@ -271,7 +271,9 @@ public class TaskController {
         this.password=password;
     }
 
-
+    public TaskTree loadTree() throws ControllerException{
+        return loadTree(currentCategoryTree.getData().getActivityName());
+    }
     public TaskTree loadTree(String treeName) throws ControllerException {
         try {
             TaskTree result;
@@ -303,7 +305,7 @@ public class TaskController {
     public void saveTrees() throws ControllerException{
         for(ControllerTree currTree:controllerTrees){
             if (currTree.isInitialized()){
-                saveTree(currTree.getTree(), currTree.getName());
+                saveTree(currTree.getName());
             }
         }
 
@@ -328,8 +330,18 @@ public class TaskController {
         }
     }
 
-    public void saveTree(TaskTree tree, String treeName) throws ControllerException {
+    public void saveTree(String treeName) throws ControllerException {
         try {
+            TaskTree tree;
+            ControllerTree controllerTree = getControllerTree(treeName);
+            if (controllerTree.isInitialized()){
+                tree=controllerTree.getTree();
+            }
+            else{
+                status="Tree wasn't loaded!";
+                operationState=false;
+                throw new ControllerException();
+            }
             TaskClientNetDriver.updateTree(tree, login, password, treeName);
             operationState=true;
             status="Tree "+treeName+" was successfully saved!";

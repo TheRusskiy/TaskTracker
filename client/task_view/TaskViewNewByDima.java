@@ -1,9 +1,16 @@
 package task_view;
 
+import exceptions.ControllerException;
 import task_controller.TaskController;
+import task_tree.ID;
+import task_tree.TaskTree;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+import java.util.List;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,6 +26,7 @@ public class TaskViewNewByDima {
     TaskController controller;
     private JFrame frame;
     private Container parentPanel;
+    private TaskViewNewByDima This=this;
 
     private Container mainPanel;
         private Container treeListPanel;
@@ -40,6 +48,61 @@ public class TaskViewNewByDima {
                 JButton treeControlsSplitButton;
     private Container statusPanel;
         private JLabel statusLabel;
+    
+    private String login;
+    private String password;
+    private String password2;
+    private String newCategory;
+    private String newNode;
+    private boolean isDialogSuccessful;
+
+    public boolean isDialogSuccessful() {
+        return isDialogSuccessful;
+    }
+
+    public void setDialogSuccessful(boolean dialogSuccessful) {
+        isDialogSuccessful = dialogSuccessful;
+    }
+
+    public String getNewNode() {
+        return newNode;
+    }
+
+    public void setNewNode(String newNode) {
+        this.newNode = newNode;
+    }
+
+    public String getNewCategory() {
+        return newCategory;
+    }
+
+    public void setNewCategory(String newCategory) {
+        this.newCategory = newCategory;
+    }
+
+    public String getPassword2() {
+        return password2;
+    }
+
+    public void setPassword2(String password2) {
+        this.password2 = password2;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
 
     public TaskViewNewByDima(final TaskController controller) {
         this.controller = controller;
@@ -89,6 +152,7 @@ public class TaskViewNewByDima {
                     treeActivitiesViewPanel.add(jTree);
                     treeModel = new DefaultTreeModel(null);
                     jTree.setModel(treeModel);
+                    jTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
                 treeActivitiesControlPanel=new JPanel();
                 treeActivitiesControlPanel.setLayout(new VerticalFlowLayout());
@@ -126,13 +190,15 @@ public class TaskViewNewByDima {
         userMenu.add(signUpMenuItem);
         JMenuItem logInMenuItem=new JMenuItem("Log In");
         userMenu.add(logInMenuItem);
+        JMenuItem deleteUserMenuItem=new JMenuItem("Delete");
+        userMenu.add(deleteUserMenuItem);
 
         //User menu:
         JMenu dataMenu = new JMenu("Data");
         menuBar.add(dataMenu);
         //User menu items:
         JMenuItem getAvailableTreesMenuItem=new JMenuItem("Get available trees");
-        dataMenu.add(getAvailableTreesMenuItem);
+        //dataMenu.add(getAvailableTreesMenuItem);
         JMenuItem saveSelectedTreeMenuItem=new JMenuItem("Save selected tree");
         dataMenu.add(saveSelectedTreeMenuItem);
         JMenuItem saveAllTreesMenuItem=new JMenuItem("Save all trees");
@@ -145,15 +211,63 @@ public class TaskViewNewByDima {
         signUpMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                new CreateUserDialog(This);
             }
         });
 
+        logInMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new LoginDialog(This);
+            }
+        });
 
+        deleteUserMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new DeleteUserDialog(This);
+            }
+        });
 
+        getAvailableTreesMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new LoginDialog(This);
+            }
+        });
+
+        saveSelectedTreeMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveSelectedTree();
+            }
+        });
+
+        saveAllTreesMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveAllTrees();
+            }
+        });
+        
+        treeControlsChooseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openSelectedCategory();
+            }            
+        });
+
+        treeControlsNewButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new NewNodeDialog(This);
+            }
+        });
 
         frame.pack();
         frame.setVisible(true);
     }
+
 
     public static JMenu getLookAndFeelMenu(final JFrame frame){
         JMenu lookAndFeelMenu = new JMenu("Look&Feel");
@@ -190,5 +304,114 @@ public class TaskViewNewByDima {
         }
         return lookAndFeelMenu;
     }
+    
+    public JFrame getFrame(){
+        return this.frame;
+    }
+    
+    public void signUp(){
+        try {
+            controller.createUser(login, password);
+            setStatus(controller.getStatus());
+        } catch (ControllerException e) {
+            e.printStackTrace();
+            setStatus(controller.getStatus());
+        }
+    }
 
+    public void deleteUser(){
+        try {
+            controller.deleteUser(login, password);
+            setStatus(controller.getStatus());
+        } catch (ControllerException e) {
+            e.printStackTrace();
+            setStatus(controller.getStatus());
+        }
+    }
+    
+    private void setStatus(String statusText){
+        statusLabel.setText(statusText);
+    }
+
+    public void getAvailableTrees() {
+        try {
+            List<String> names = controller.getAvailableTrees(login, password);
+            showAvailableTrees(names);
+            setStatus(controller.getStatus());
+        } catch (ControllerException e) {
+            e.printStackTrace();
+            setStatus(controller.getStatus());
+        }
+    }
+
+    private void showAvailableTrees(List<String> names) {
+        listModel.clear();
+        for(String name:names){
+            listModel.addElement(name);
+        }
+    }
+
+    private void saveSelectedTree() {
+        try {
+            controller.saveTree(getSelectedCategory());
+            setStatus(controller.getStatus());
+        } catch (ControllerException e) {
+            e.printStackTrace();
+            setStatus(controller.getStatus());
+        }
+    }
+
+    private void saveAllTrees() {
+        try {
+            controller.saveTrees();
+            setStatus(controller.getStatus());
+        } catch (ControllerException e) {
+            e.printStackTrace();
+            setStatus(controller.getStatus());
+        }
+    }
+
+
+    private void openSelectedCategory() {
+        try {
+
+            TaskTree tree = controller.loadTree(getSelectedCategory());
+            redrawTree(tree);
+            setStatus(controller.getStatus());
+        } catch (ControllerException e) {
+            e.printStackTrace();
+            setStatus(controller.getStatus());
+        }
+    }
+
+    private String getSelectedCategory(){
+        String categoryName = treeList.getSelectedValue();
+        if (categoryName==null) {
+            setStatus("Nothing was selected!");
+            throw new RuntimeException();
+        }
+        return categoryName;
+    }
+    
+    private ID getSelectedID(){
+        TreePath[] paths = jTree.getSelectionPaths();
+        TaskTree tree =(TaskTree)paths[0].getLastPathComponent();
+        return tree.getID();
+    }
+
+    private void redrawTree(TaskTree tree){
+        treeModel.setRoot(tree);
+    }
+    
+    public void newNode(){
+        try {
+            controller.newNode(getSelectedID(), newNode);
+            TaskTree tree = controller.loadTree();
+            redrawTree(tree);
+            setStatus(controller.getStatus());
+        } catch (ControllerException e) {
+            e.printStackTrace();
+            setStatus(controller.getStatus());
+        }
+    }
 }
