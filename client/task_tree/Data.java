@@ -26,7 +26,7 @@ public class Data implements Serializable{
     }
 
     public String toString(){
-        if (activityName!=null)return activityName;
+        if (activityName!=null)return activityName+": "+timeSpent+"s";
         return text;
     }
 
@@ -77,6 +77,6 @@ public class Data implements Serializable{
      */
     public boolean equals(Data data)
     {
-        return this.getText().equals(data.getText());
+        return this.getActivityName().equals(data.getActivityName());
     }
 }

@@ -6,14 +6,15 @@ import task_tree.ID;
 import task_tree.TaskTree;
 
 import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-import java.util.List;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Enumeration;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -106,6 +107,7 @@ public class TaskViewNewByDima {
 
     public TaskViewNewByDima(final TaskController controller) {
         this.controller = controller;
+        controller.setView(this);
         frame = new JFrame("Task Tracker (C) NetCracker");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -253,14 +255,25 @@ public class TaskViewNewByDima {
         treeControlsChooseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                openSelectedCategory();
+                chooseTree();
             }            
         });
 
+        treeListOpenButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openSelectedCategory();
+            }
+        });
         treeControlsNewButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new NewNodeDialog(This);
+                if (getSelectedID()==null){
+                    setStatus("Select parent tree!");
+                }
+                else{
+                    new NewNodeDialog(This);
+                }
             }
         });
 
@@ -371,10 +384,23 @@ public class TaskViewNewByDima {
         }
     }
 
+    private void chooseTree() {
+        try {
+            if (getSelectedID()==null){
+                setStatus("Select parent tree!");
+            }
+            else{
+                controller.chooseTree(getSelectedID());
+                setStatus("Tree was successfully selected!");
+            }
+        } catch (ControllerException e) {
+            e.printStackTrace();
+            setStatus(controller.getStatus());
+        }
+    }
 
     private void openSelectedCategory() {
         try {
-
             TaskTree tree = controller.loadTree(getSelectedCategory());
             redrawTree(tree);
             setStatus(controller.getStatus());
@@ -399,8 +425,12 @@ public class TaskViewNewByDima {
         return tree.getID();
     }
 
-    private void redrawTree(TaskTree tree){
+    public void redrawTree(TaskTree tree){
+        TreePath[] paths = jTree.getSelectionPaths();
         treeModel.setRoot(tree);
+        expandAll(jTree);
+        jTree.setSelectionPaths(paths);
+        //setStatus("redrawn"+ System.currentTimeMillis());
     }
     
     public void newNode(){
@@ -413,5 +443,22 @@ public class TaskViewNewByDima {
             e.printStackTrace();
             setStatus(controller.getStatus());
         }
+    }
+    public void expandAll(JTree tree) {
+        TreeNode root = (TreeNode) tree.getModel().getRoot();
+        expandAll(tree, new TreePath(root));
+    }
+
+    private void expandAll(JTree tree, TreePath parent) {
+        TreeNode node = (TreeNode) parent.getLastPathComponent();
+        if (node.getChildCount() >= 0) {
+            for (Enumeration e = node.children(); e.hasMoreElements();) {
+                TreeNode n = (TreeNode) e.nextElement();
+                TreePath path = parent.pathByAddingChild(n);
+                expandAll(tree, path);
+            }
+        }
+        tree.expandPath(parent);
+        // tree.collapsePath(parent);
     }
 }

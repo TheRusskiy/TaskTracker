@@ -69,7 +69,7 @@ public class TaskView extends JFrame {
         super("TaskTracker");
         this.trees = trees;
         this.controller=controller;
-        controller.setView(this);
+        controller.setView((TaskViewNewByDima)(Object)this);
         setSize(600, 400);
         setAvailableTreesScrollPane();
 

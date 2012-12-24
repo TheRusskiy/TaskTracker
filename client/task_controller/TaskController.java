@@ -7,7 +7,7 @@ import task_tree.Data;
 import task_tree.ID;
 import task_tree.IDGenerator;
 import task_tree.TaskTree;
-import task_view.TaskView;
+import task_view.TaskViewNewByDima;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -23,7 +23,7 @@ import java.util.List;
 public class TaskController {
     private String status="";
     private boolean operationState=true;
-    private TaskView view;
+    private TaskViewNewByDima view;
     private List<ControllerTree> controllerTrees=new LinkedList<>();
     private String login=null;
     private String password=null;
@@ -36,6 +36,7 @@ public class TaskController {
         tickThread.setDaemon(true);
         tickThread.start();
     }
+
 
     private class TickThread extends Thread{
         private TaskTree chosenTree = null;
@@ -61,6 +62,7 @@ public class TaskController {
 
     private void increaseTreeTime(TaskTree tree, int bySeconds){
         tree.getData().increaseTimeBySeconds(bySeconds);
+        view.redrawTree(currentCategoryTree);
         if (tree.getTaskParent()!=null){
             increaseTreeTime(tree.getTaskParent(), bySeconds);
         }
@@ -113,7 +115,7 @@ public class TaskController {
     }
 
 
-    public void setView(TaskView view) {
+    public void setView(TaskViewNewByDima view) {
         this.view = view;
     }
 
