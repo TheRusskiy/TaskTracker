@@ -1,7 +1,5 @@
-import task_tree.Data;
-import task_tree.IDGenerator;
-import task_tree.TaskTree;
-import task_view.TaskView;
+import task_controller.TaskController;
+import task_view.TaskViewNewByDima;
 
 /**
  * Created with IntelliJ IDEA.
@@ -14,33 +12,31 @@ public class TaskViewTest {
     public static boolean testAll()
     {
         boolean result=true;
-        System.out.println("Failed tests:");
-//        if (!createTaskTree())
-//        {
-//            System.out.println("create tree:"+createTaskTree());
-//            result=false;
-//        }
+        if (!newByDimaTest())
+        {
+            System.out.println("newByDimaTest fails");
+            result=false;
+        }
+        if (result){
+            System.out.println("View test was successful!");
+        }
         return result;
     }
 
-    public static void shittyTest() {
-        IDGenerator idg = new IDGenerator();
-        Data d = new Data("Not Working");
-        Data g = new Data("Eating");
-        Data d1 = new Data("Eating bananas");
-        TaskTree tt = new TaskTree(idg, d);
-        TaskTree t2 = new TaskTree(idg, g);
-        TaskTree t3 = new TaskTree(idg, d1);
-        tt.add(t2);
-        t2.add(t3);
-
-        //System.out.println(tt.getAllowsChildren());
-        TaskView tv = new TaskView(new TaskTree[] {tt, t2});
+    public static boolean newByDimaTest() {
+        try{
+            TaskController controller = new TaskController();
+            TaskViewNewByDima view = new TaskViewNewByDima(controller);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     public static void main(String[] args)
     {
-        //TaskViewTest.testAll();
-        TaskViewTest.shittyTest();
+        TaskViewTest.testAll();
     }
 }

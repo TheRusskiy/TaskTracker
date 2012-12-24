@@ -40,6 +40,7 @@ public class NetworkInteraction implements Serializable {
         TREE_DOES_NOT_EXIST,
         TREE_ALREADY_EXISTS,
         WRONG_CREDENTIALS,
+        WRONG_CREDENTIALS_FORMAT,
         ERROR;
     }
 

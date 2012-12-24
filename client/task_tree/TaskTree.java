@@ -97,7 +97,7 @@ public class TaskTree implements Serializable, Cloneable, TreeNode{
     /**
      * @return parent of this task_tree.TaskTree
      */
-    private TaskTree getTaskParent() {
+    public TaskTree getTaskParent() {
         return parent;
     }
 

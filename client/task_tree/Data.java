@@ -14,7 +14,16 @@ public class Data implements Serializable{
     //Data fields:
     private String text;
     private String activityName;
+    private int timeSpent = 0;
     //TODO spent time field
+
+    public void increaseTimeBySeconds(int seconds){
+        timeSpent+=seconds;
+    }
+
+    public int getSpentTime(){
+        return timeSpent;
+    }
 
     public String toString(){
         if (activityName!=null)return activityName;
@@ -28,13 +37,20 @@ public class Data implements Serializable{
     public void setActivityName(String activityName) {
         this.activityName = activityName;
     }
-    
+
+    /**
+     * Constructor without params (C) your Cap
+     */
+    public Data()
+    {}
+
     /**
      * Constructor that takes String
+     * (FOR TEST PURPOSES or just 4 fun)
      */
-    public Data(String text)
+    public Data(String testText)
     {
-        this.text=text;
+        this.text=testText;
     }
     
     

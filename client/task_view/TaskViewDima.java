@@ -9,6 +9,7 @@ import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -100,11 +101,13 @@ public class TaskViewDima extends TaskView {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    TaskTree loadedTree = controller.createUser(userControlLoginText.getText(), userControlPasswordText.getText());
+                    controller.createUser(userControlLoginText.getText(), userControlPasswordText.getText());
+                    List<String> trees = controller.getAvailableTrees(userControlLoginText.getText(), userControlPasswordText.getText());
+                    TaskTree loadedTree =  controller.loadTree(trees.get(0));
                     redrawTree(loadedTree);
                     setStatus(controller.getStatus());
                 } catch (ControllerException e1) {
-                    setStatus(e1.getMessage());
+                    setStatus(controller.getStatus());
                     e1.printStackTrace();
                 }
             }
@@ -117,7 +120,7 @@ public class TaskViewDima extends TaskView {
                     //redrawTree(loadedTree);
                     setStatus(controller.getStatus());
                 } catch (ControllerException e1) {
-                    setStatus(e1.getMessage());
+                    setStatus(controller.getStatus());
                     e1.printStackTrace();
                 }
             }
