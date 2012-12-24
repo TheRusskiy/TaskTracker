@@ -213,10 +213,10 @@ public class TaskTree implements Serializable, Cloneable, TreeNode{
         if (parent==null) throw new NoParentTreeException();
         for(TaskTree t: children){
             parent.add(t);
-            t.setParent(null);
+            t.setParent(this.parent);
         }
-        parent.delete(this.id);
-        this.parent=null;
+        parent.children.remove(this);//delete(this.id);
+        //this.parent=null;
     }
 
 

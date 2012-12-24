@@ -243,7 +243,7 @@ public class TaskController {
             throw new ControllerException();
         }
     }
-    //TODO List<TaskTree> or TaskTree[] as return parameter
+
     public List<String> getAvailableTrees(String login, String password) throws ControllerException {
         try {
             setCredentials(login, password);
@@ -266,6 +266,16 @@ public class TaskController {
             operationState=false;
             throw new ControllerException();
         }
+    }
+
+    public List<String> getAvailableTrees() throws ControllerException {
+        List<String> names = new LinkedList<>();
+        for(ControllerTree controllerTree: controllerTrees){
+            names.add(controllerTree.getName());
+        }
+        operationState=true;
+        status="Available trees were was successfully loaded!";
+        return names;
     }
 
     private void setCredentials(String login, String password) {
@@ -313,9 +323,14 @@ public class TaskController {
 
     }
 
-    public void createTree(TaskTree tree, String treeName) throws ControllerException {
+    public void createTree(String treeName) throws ControllerException {
         try {
+            IDGenerator generator = new IDGenerator();
+            Data data = new Data();
+            data.setActivityName(treeName);
+            TaskTree tree = new TaskTree(generator, data);
             TaskClientNetDriver.saveTree(tree, login, password, treeName);
+            controllerTrees.add(new ControllerTree(treeName));
             operationState=true;
             status="Tree "+treeName+" was successfully created!";
             return;

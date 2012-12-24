@@ -277,6 +277,41 @@ public class TaskViewNewByDima {
             }
         });
 
+        treeListDeleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deleteSelectedCategory();
+            }
+        });
+
+        treeListNewButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new NewCategoryDialog(This);
+            }
+        });
+
+        treeControlsDeleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deleteSelectedNode();
+            }
+        });
+
+        treeControlsSplitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                splitSelectedNode();
+            }
+        });
+
+        exitFileItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
+            }
+        });
+
         frame.pack();
         frame.setVisible(true);
     }
@@ -410,6 +445,30 @@ public class TaskViewNewByDima {
         }
     }
 
+    private void deleteSelectedCategory() {
+        try {
+            controller.deleteTree(getSelectedCategory());
+            List<String> names = controller.getAvailableTrees();
+            showAvailableTrees(names);
+            setStatus(controller.getStatus());
+        } catch (ControllerException e) {
+            e.printStackTrace();
+            setStatus(controller.getStatus());
+        }
+    }
+
+    public void createNewCategory() {
+        try {
+            controller.createTree(newCategory);
+            List<String> names = controller.getAvailableTrees();
+            showAvailableTrees(names);
+            setStatus(controller.getStatus());
+        } catch (ControllerException e) {
+            e.printStackTrace();
+            setStatus(controller.getStatus());
+        }
+    }
+
     private String getSelectedCategory(){
         String categoryName = treeList.getSelectedValue();
         if (categoryName==null) {
@@ -444,6 +503,31 @@ public class TaskViewNewByDima {
             setStatus(controller.getStatus());
         }
     }
+
+    private void deleteSelectedNode(){
+        try {
+            controller.deleteNode(getSelectedID());
+            TaskTree tree = controller.loadTree();
+            redrawTree(tree);
+            setStatus(controller.getStatus());
+        } catch (ControllerException e) {
+            e.printStackTrace();
+            setStatus(controller.getStatus());
+        }
+    }
+
+    private void splitSelectedNode(){
+        try {
+            controller.splitNode(getSelectedID());
+            TaskTree tree = controller.loadTree();
+            redrawTree(tree);
+            setStatus(controller.getStatus());
+        } catch (ControllerException e) {
+            e.printStackTrace();
+            setStatus(controller.getStatus());
+        }
+    }
+
     public void expandAll(JTree tree) {
         TreeNode root = (TreeNode) tree.getModel().getRoot();
         expandAll(tree, new TreePath(root));
