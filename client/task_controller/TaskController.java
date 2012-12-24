@@ -396,5 +396,10 @@ public class TaskController {
         }
     }
 
+    public static void main(String[] args){
+        TaskController controller = new TaskController();
+        TaskViewNewByDima view = new TaskViewNewByDima(controller);
+    }
+
 
 }

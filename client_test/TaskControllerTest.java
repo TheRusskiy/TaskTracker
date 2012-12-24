@@ -1,5 +1,5 @@
 import task_controller.TaskController;
-import task_view.TaskViewDima;
+import task_view.TaskViewNewByDima;
 
 /**
  * Created with IntelliJ IDEA.
@@ -14,7 +14,7 @@ public class TaskControllerTest {
         boolean result=true;
         System.out.println("Failed tests:");
         TaskController controller = new TaskController();
-        TaskViewDima view = new TaskViewDima(controller);
+        TaskViewNewByDima view = new TaskViewNewByDima(controller);
 //        if (!createTaskTree())
 //        {
 //            System.out.println("create tree:"+createTaskTree());
