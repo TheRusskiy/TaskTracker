@@ -19,6 +19,7 @@ nbproject/
 build/
 nbbuild/
 dist/
+out/
 nbdist/
 nbactions.xml
 nb-configuration.xml
