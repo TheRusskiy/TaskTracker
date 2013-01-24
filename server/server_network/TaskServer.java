@@ -120,6 +120,15 @@ public class TaskServer {
             }
             switch (interaction.getRequestCode()){
                 case CREATE_NEW_USER:{
+                    if (!checkCredentialFormat(interaction.getLogin(), interaction.getPassword())){
+                        interaction.setReplyCode(NetworkInteraction.ReplyCode.WRONG_CREDENTIALS_FORMAT);
+                        FileManager.placeToLog(
+                                NetworkInteraction.ReplyCode.WRONG_CREDENTIALS_FORMAT.name()+":"
+                                        +"Login: "+interaction.getLogin()
+                                        +"Password: "+interaction.getPassword()
+                        );
+                        break;
+                    }
                     if (userExists(interaction.getLogin())) {
                         interaction.setReplyCode(NetworkInteraction.ReplyCode.USER_ALREADY_EXISTS);
                         FileManager.placeToLog(
@@ -282,6 +291,34 @@ public class TaskServer {
             if (o.getLogin().equals(login)) return true;
         }
         return false;
+    }
+
+    private static boolean checkCredentialFormat(String login, String password){
+        if (login.equals("")||password.equals("")) return false;
+        for(int i=0; i<login.length(); i++)
+        {
+            if (!allowedSymbol(login.charAt(i))){
+                return false;
+            }
+        }
+        for(int i=0; i<password.length(); i++)
+        {
+            if (!allowedSymbol(password.charAt(i))){
+                return false;
+            }
+        }
+        return true;
+
+    }
+    private static boolean allowedSymbol(char crawler) {
+        if ((crawler>='0'&&crawler<='9')
+                ||(crawler<='Z'&&crawler>='A')
+                ||(crawler<='z'&&crawler>='a')
+                ||(crawler=='_'))
+        {
+            return true;
+        }
+        else return false;
     }
 
     /**

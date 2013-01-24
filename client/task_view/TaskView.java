@@ -15,7 +15,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.*;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -68,7 +69,7 @@ public class TaskView extends JFrame {
         super("TaskTracker");
         this.trees = trees;
         this.controller=controller;
-        controller.setView(this);
+        controller.setView((TaskViewNewByDima)(Object)this);
         setSize(600, 400);
         setAvailableTreesScrollPane();
 
@@ -274,8 +275,10 @@ public class TaskView extends JFrame {
             String password = (String)JOptionPane.showInputDialog(frame,
                     "Input password:", "Sign Up | Password", JOptionPane.WARNING_MESSAGE);
             try {
-                TaskTree loadedTree = controller.createUser(login, password);
-                //redrawTree(loadedTree);
+                controller.createUser(login, password);
+                List<String> trees = controller.getAvailableTrees(login, password);
+                TaskTree loadedTree =  controller.loadTree(trees.get(0));
+                        //redrawTree(loadedTree);
 
                 setStatus(controller.getStatus());
             } catch (ControllerException e1) {
@@ -305,7 +308,7 @@ public class TaskView extends JFrame {
             String password = (String)JOptionPane.showInputDialog(frame,
                     "Input password:", "Log In | Password", JOptionPane.WARNING_MESSAGE);
             try {
-                TaskTree loadedTree = controller.loadTree(login, password, "Rest");
+                TaskTree loadedTree = controller.loadTree("Rest");
                 //redrawTree(loadedTree);
                 //setAvailableTreesScrollPane(login,password);
                 //availabletrees.repaint();

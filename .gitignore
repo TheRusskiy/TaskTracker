@@ -19,12 +19,14 @@ nbproject/
 build/
 nbbuild/
 dist/
+out/
 nbdist/
 nbactions.xml
 nb-configuration.xml
 # java
 *.class
 *.jar
+*.mf
 
 *.txt
 /server_data/
