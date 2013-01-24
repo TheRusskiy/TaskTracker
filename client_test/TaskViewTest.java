@@ -37,7 +37,8 @@ public class TaskViewTest {
 
         //System.out.println(tt.getAllowsChildren());
         TaskController controller = new TaskController();
-        TaskView tv = new TaskView(new TaskTree[] {tt, t2}, controller);
+        //TaskView tv = new TaskView(new TaskTree[] {}, controller);
+        TaskView testview = new TaskView(controller);
     }
 
     public static void main(String[] args)

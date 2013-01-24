@@ -2,20 +2,19 @@ package task_view;
 
 import exceptions.ControllerException;
 import task_controller.TaskController;
+import task_tree.Data;
 import task_tree.TaskTree;
 
 import javax.swing.*;
 import javax.swing.border.SoftBevelBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
+import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.*;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -27,10 +26,17 @@ import java.util.Calendar;
 public class TaskView extends JFrame {
 
     TaskController controller;
+    String login;
+    String password;
     private TaskTree[] trees;  // get from controller
     TaskTree defaulttree;   // Rest task
     TaskTree currenttree;   // current tree tab
-    TaskTree activetask;    //
+    TaskTree selectedtask;  // selected node
+    TaskTree activetask;    // ???????
+    JTree tree;
+    JList list;
+    JSplitPane splitpane;
+
 
     JTabbedPane tabbedpane;
     JLabel statuslabel = new JLabel("Status...");
@@ -60,28 +66,44 @@ public class TaskView extends JFrame {
     }
 
     public TaskView (final TaskController controller){
-        this.trees = trees;
-        this.controller=controller;
-    }
-
-    public TaskView (TaskTree[] trees, final TaskController controller){
         super("TaskTracker");
-        this.trees = trees;
+        trees = new TaskTree[0];
         this.controller=controller;
         controller.setView(this);
         setSize(600, 400);
-        setAvailableTreesScrollPane();
+        setAvailableTreesScrollPane(trees);
 
         tabbedpane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
         tabbedpane.setMinimumSize(new Dimension(100, 50));
 
+        setTreePane();
         setStatusPanel();
         setJMenuBar(createJMenu());
         add(setJPanels());
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);
+
     }
+
+//    public TaskView (TaskTree[] trees, final TaskController controller){
+//        super("TaskTracker");
+//        this.trees = trees;
+//        this.controller=controller;
+//        controller.setView(this);
+//        setSize(600, 400);
+//        setAvailableTreesScrollPane();
+//
+//        tabbedpane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
+//        tabbedpane.setMinimumSize(new Dimension(100, 50));
+//
+//        setStatusPanel();
+//        setJMenuBar(createJMenu());
+//        add(setJPanels());
+//
+//        setDefaultCloseOperation(EXIT_ON_CLOSE);
+//        setVisible(true);
+//    }
 
     private JMenuBar createJMenu(){
         JMenuBar jmenubar = new JMenuBar();
@@ -135,7 +157,7 @@ public class TaskView extends JFrame {
     private JPanel setJPanels(){
         JPanel basic = new JPanel();
         basic.setLayout(new BorderLayout(3,3));
-        basic.add(setTreePane(), BorderLayout.CENTER);
+        basic.add(splitpane, BorderLayout.CENTER);
         basic.add(setControlPanel(), BorderLayout.EAST);
         basic.add(statuspanel, BorderLayout.SOUTH);
         basic.setVisible(true);
@@ -158,6 +180,7 @@ public class TaskView extends JFrame {
         JButton createnewbutton = new JButton("Create New...");
         control.add(createnewbutton);
         JButton addbutton = new JButton("Add...");
+        addbutton.addActionListener(new AddListener(this));
         control.add(addbutton);
         JButton editbutton = new JButton("Edit...");
         control.add(editbutton);
@@ -166,6 +189,7 @@ public class TaskView extends JFrame {
         JButton clonebutton = new JButton("Clone");
         control.add(clonebutton);
         JButton save = new JButton("Save All Tasks");
+        save.addActionListener(new SaveAllListener(this));
         control.add(save);
         control.setVisible(true);
         return control;
@@ -173,8 +197,14 @@ public class TaskView extends JFrame {
 
     private void setTreesTabbedPane(String str, int index){
 
-        JTree tree = new JTree(trees[index]);
+        final JTree tree = new JTree(trees[index]);   // wtf?
         tree.setShowsRootHandles(true);
+        tree.addTreeSelectionListener(new TreeSelectionListener() {
+            @Override
+            public void valueChanged(TreeSelectionEvent e) {
+                selectedtask = (TaskTree)tree.getSelectionPath().getLastPathComponent();
+            }
+        });
         JPanel jp = new JPanel();
         jp.setLayout(new BorderLayout());
         JScrollPane jsp = new JScrollPane(tree);
@@ -185,7 +215,7 @@ public class TaskView extends JFrame {
         clsbutton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                tabbedpane.removeTabAt(tabbedpane.getSelectedIndex());
+                tabbedpane.removeTabAt(tabbedpane.getSelectedIndex());        ////////
             }
         });
         jp1.add(clsbutton);
@@ -193,25 +223,32 @@ public class TaskView extends JFrame {
         jp.add(jp1, BorderLayout.SOUTH);
         jp.setVisible(true);
         tabbedpane.add(str, jp);
+        tabbedpane.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                String s = tabbedpane.getTitleAt(tabbedpane.getSelectedIndex());
+                try {
+                    currenttree = controller.loadTree(login, password, s);
+                } catch (ControllerException e1) {
+                    setStatus(e1.getMessage());
+                    e1.printStackTrace();
+                }
+            }
+        });
         tabbedpane.setVisible(true);
     }
 
-    private JSplitPane setTreePane(){
-        JSplitPane sp = new JSplitPane(
+    private void setTreePane(){
+        splitpane = new JSplitPane(
                 JSplitPane.HORIZONTAL_SPLIT,
                 availabletrees,
                 tabbedpane);
-        sp.setVisible(true);
-        return sp;
+        splitpane.setVisible(true);
     }
 
-    private void setAvailableTreesScrollPane() {
-//        try {
-//            trees = controller.getAvailableTrees(login,password).toArray(trees);
-//        } catch (ControllerException e) {
-//            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//        }
-        final JList list = new JList(trees);
+    private void setAvailableTreesScrollPane(TaskTree[] trees) {
+        this.trees = trees;
+        list = new JList(trees);
         list.addListSelectionListener(
                 new ListSelectionListener() {
                     @Override
@@ -225,34 +262,26 @@ public class TaskView extends JFrame {
         );
         availabletrees = new JScrollPane(list);
         availabletrees.setMinimumSize(new Dimension(100,50));
+        availabletrees.setPreferredSize(new Dimension(50,50));
         availabletrees.setVisible(true);
-        //return jsp;
     }
 
     private void setStatusPanel(){
-        //JPanel statuspanel = new JPanel();
         statuspanel.setLayout(new FlowLayout());
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Calendar cal = Calendar.getInstance();
         statuspanel.add(new JLabel(dateFormat.format(cal.getTime())));
         statuspanel.setBorder(new SoftBevelBorder(1));
         statuspanel.add(new JLabel("   |   "));
-        //statuslabel = new JLabel("Status...");
         statuspanel.add(statuslabel);
         statuspanel.setVisible(true);
-        this.statuspanel = statuspanel;
-        //return statuspanel;
     }
 
     private void setStatus(String status){
         statuslabel.setText(status);
         statuslabel.repaint();
-        //setStatusPanel();
         statuspanel.repaint();
     }
-//    private void redrawTree(TaskTree loaderTree){
-//        currenttree.setModel(new DefaultTreeModel(loaderTree));
-//    }
 
     ////////////////////////////////////////////////////////////////
 
@@ -276,12 +305,11 @@ public class TaskView extends JFrame {
                     "Input password:", "Sign Up | Password", JOptionPane.WARNING_MESSAGE);
             try {
                 TaskTree loadedTree = controller.createUser(login, password);
-                //redrawTree(loadedTree);
-
+                setDefaultTree(loadedTree);
                 setStatus(controller.getStatus());
             } catch (ControllerException e1) {
                 setStatus(e1.getMessage());
-                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                e1.printStackTrace();
             }
         }
 
@@ -301,20 +329,93 @@ public class TaskView extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             //TODO a single window for both inputs
-            String login = (String)JOptionPane.showInputDialog(frame,
+            login = (String)JOptionPane.showInputDialog(frame,
                     "Input login:", "Log In | Login", JOptionPane.WARNING_MESSAGE);
-            String password = (String)JOptionPane.showInputDialog(frame,
+            password = (String)JOptionPane.showInputDialog(frame,
                     "Input password:", "Log In | Password", JOptionPane.WARNING_MESSAGE);
             try {
-                TaskTree loadedTree = controller.loadTree(login, password, "Rest");
-                //redrawTree(loadedTree);
-                //setAvailableTreesScrollPane(login,password);
-                //availabletrees.repaint();
+                List<String> strlist = controller.getAvailableTrees(login, password);
+                trees = new TaskTree[strlist.size()];
+                System.out.println("Size of list  "+strlist.size());
+//                trees[0] = controller.loadTree(login, password, "Rest");
+//                for (int i=1; i<strlist.size(); i++){
+//                    trees[i] = controller.loadTree(login,password,strlist.get(i));
+//                }
+                int i = 0;
+                for (String x : strlist)  {
+                    trees[i]=controller.loadTree(login, password, x);
+                    i++;
+                }
+                setDefaultTree(controller.loadTree(login, password, "Rest"));
+                list.setListData(trees);
+                availabletrees.setViewportView(list);
+                availabletrees.repaint();
+                splitpane.repaint();
                 setStatus(controller.getStatus());
-
             } catch (ControllerException e1) {
                 setStatus(e1.getMessage());
-                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                e1.printStackTrace();
+            }
+        }
+    }
+
+    class AddListener implements ActionListener{
+        JFrame frame;
+
+        public AddListener(JFrame frame){
+            this.frame = frame;
+        }
+
+        /**
+         * Invoked when an action occurs.
+         */
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                currenttree = controller.loadTree(login,
+                        password, tabbedpane.getTitleAt(tabbedpane.getSelectedIndex()));
+                tree = new JTree(currenttree);
+                tree.addTreeSelectionListener(new TreeSelectionListener() {
+                    @Override
+                    public void valueChanged(TreeSelectionEvent e) {
+                        selectedtask = (TaskTree)tree.getLastSelectedPathComponent();
+                        setStatus(selectedtask.toString());
+                        System.out.println(selectedtask.toString());
+                    }
+                });
+                //selectedtask = (TaskTree)tree.getSelectionPath().getLastPathComponent();
+                String nodename = (String)JOptionPane.showInputDialog(frame,
+                        "Input task name:", "Add new task", JOptionPane.WARNING_MESSAGE);
+                selectedtask.add(new TaskTree(selectedtask.getIDGenerator(), new Data(nodename)));
+                tabbedpane.repaint();
+                setStatus(controller.getStatus());
+            } catch (ControllerException e1) {
+                e1.printStackTrace();
+                setStatus(e1.getMessage());
+            }
+        }
+    }
+
+    class SaveAllListener implements ActionListener{
+        JFrame frame;
+
+        public SaveAllListener(JFrame frame){
+            this.frame = frame;
+        }
+
+        /**
+         * Invoked when an action occurs.
+         */
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try{
+            String treename = tabbedpane.getTitleAt(tabbedpane.getSelectedIndex());
+            currenttree = controller.loadTree(login,
+                    password, treename);
+            controller.saveTree(login, password, currenttree, treename);
+            } catch (ControllerException e1) {
+                e1.printStackTrace();
+                setStatus(e1.getMessage());
             }
         }
     }
