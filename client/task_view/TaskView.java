@@ -483,6 +483,14 @@ public class TaskView extends JFrame {
             try{
                 currenttree = controller.loadTree(tabbedpane.getTitleAt(tabbedpane.getSelectedIndex()));
                 tree = new JTree(currenttree);
+                tree.addTreeSelectionListener(new TreeSelectionListener() {
+                    @Override
+                    public void valueChanged(TreeSelectionEvent e) {
+                        selectedtask = (TaskTree)tree.getLastSelectedPathComponent();
+                    }
+                });
+                controller.deleteNode(selectedtask.getID());
+                tabbedpane.repaint();
             } catch (ControllerException e1) {
                 e1.printStackTrace();
                 setStatus(e1.getMessage());
