@@ -7,7 +7,7 @@ import task_tree.Data;
 import task_tree.ID;
 import task_tree.IDGenerator;
 import task_tree.TaskTree;
-import task_view.TaskViewNewByDima;
+import task_view.TaskView;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -23,7 +23,7 @@ import java.util.List;
 public class TaskController {
     private String status="";
     private boolean operationState=true;
-    private TaskViewNewByDima view;
+    private TaskView view;
     private List<ControllerTree> controllerTrees=new LinkedList<>();
     private String login=null;
     private String password=null;
@@ -115,7 +115,7 @@ public class TaskController {
     }
 
 
-    public void setView(TaskViewNewByDima view) {
+    public void setView(TaskView view) {
         this.view = view;
     }
 
@@ -398,7 +398,7 @@ public class TaskController {
 
     public static void main(String[] args){
         TaskController controller = new TaskController();
-        TaskViewNewByDima view = new TaskViewNewByDima(controller);
+        TaskView view = new TaskView(controller);
     }
 
 

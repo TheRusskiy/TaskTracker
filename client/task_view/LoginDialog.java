@@ -20,13 +20,13 @@ public class LoginDialog extends JFrame{
     private JTextField passwordField = new JTextField();
     private JButton loginButton = new JButton("Log In");
     private JButton cancelButton = new JButton("Cancel");
-    TaskViewNewByDima parent;
+    TaskView parent;
     JFrame parentFrame;
 
-    public LoginDialog(TaskViewNewByDima parent) {
+    public LoginDialog(TaskView parent) {
         super("Task Tracker (C) NetCracker");
         this.parent=parent;
-        parentFrame = parent.getFrame();
+        parentFrame = parent;
         parentFrame.disable();
 
 
@@ -68,7 +68,7 @@ public class LoginDialog extends JFrame{
     }
 
     private void cancel() {
-        parent.setDialogSuccessful(false);
+        //parent.setDialogSuccessful(false);
         parentFrame.enable();
         this.setVisible(false);
     }
@@ -81,7 +81,7 @@ public class LoginDialog extends JFrame{
         {
             parent.setPassword(passwordField.getText());
             parent.setLogin(loginField.getText());
-            parent.getAvailableTrees();
+            //parent.getAvailableTrees();
             parentFrame.enable();
             this.setVisible(false);
         }

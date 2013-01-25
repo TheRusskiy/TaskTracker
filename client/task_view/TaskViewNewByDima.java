@@ -107,7 +107,7 @@ public class TaskViewNewByDima {
 
     public TaskViewNewByDima(final TaskController controller) {
         this.controller = controller;
-        controller.setView(this);
+        //controller.setView(this);
         frame = new JFrame("Task Tracker (C) NetCracker");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -220,7 +220,7 @@ public class TaskViewNewByDima {
         logInMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new LoginDialog(This);
+                //new LoginDialog(This);
             }
         });
 
@@ -234,7 +234,7 @@ public class TaskViewNewByDima {
         getAvailableTreesMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new LoginDialog(This);
+                //new LoginDialog(This);
             }
         });
 
